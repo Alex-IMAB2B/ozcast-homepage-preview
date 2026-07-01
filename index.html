@@ -211,9 +211,9 @@
         .map-section__image img { width: auto; height: auto; display: block; max-height: 800px; object-fit: contain; object-position: left center; }
         .map-section__text-col { padding-left: 0; }
 
-        /* --- 10. PEOPLE & CULTURE (Scroll-X Carousel) --- */
-        .people { background: #FFFFFF; position: relative; overflow: hidden; }
-        .people__scroll-region { height: 300vh; position: relative; width: 100%; max-width: 100vw; }
+        /* --- 10. PEOPLE & CULTURE (Scroll-X Carousel — Motion) --- */
+        .people { background: #FFFFFF; position: relative; }
+        .people__scroll-region { height: 300vh; position: relative; width: 100vw; max-width: 100%; }
         .people__sticky { position: sticky; top: 0; left: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
         .people__top { text-align: left; padding: 0 70px; margin-bottom: 40px; }
         .people__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
@@ -222,15 +222,15 @@
         .people__strip { display: flex; gap: 24px; padding: 0 70px; width: fit-content; will-change: transform; }
         .people__card { flex-shrink: 0; width: 480px; border-radius: 12px; overflow: hidden; }
         .people__card img { width: 100%; height: 360px; object-fit: cover; display: block; border-radius: 12px; }
-        .people__progress-bar { position: absolute; bottom: 40px; left: 70px; right: 70px; height: 3px; background: rgba(53,53,53,0.08); border-radius: 2px; overflow: hidden; }
-        .people__progress-fill { height: 100%; background: #CCDB2A; width: 0%; border-radius: 2px; transform-origin: left; will-change: width; }
+        .people__progress-wrap { position: absolute; bottom: 40px; left: 70px; right: 70px; height: 3px; background: rgba(53,53,53,0.08); border-radius: 2px; overflow: hidden; }
+        .people__progress-fill { height: 100%; background: #CCDB2A; border-radius: 2px; transform-origin: left; transform: scaleX(0); }
 
         @media (max-width: 1024px) {
             .people__top { padding: 0 40px; }
             .people__strip { padding: 0 40px; gap: 20px; }
             .people__card { width: 400px; }
             .people__card img { height: 300px; }
-            .people__progress-bar { left: 40px; right: 40px; }
+            .people__progress-wrap { left: 40px; right: 40px; }
         }
         @media (max-width: 768px) {
             .people__scroll-region { height: 250vh; }
@@ -238,7 +238,7 @@
             .people__strip { padding: 0 24px; gap: 16px; }
             .people__card { width: 300px; }
             .people__card img { height: 220px; }
-            .people__progress-bar { left: 24px; right: 24px; }
+            .people__progress-wrap { left: 24px; right: 24px; }
         }
 
 
@@ -734,7 +734,7 @@
                         <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast team culture" loading="lazy">
                     </div>
                 </div>
-                <div class="people__progress-bar">
+                <div class="people__progress-wrap">
                     <div class="people__progress-fill" id="peopleProgress"></div>
                 </div>
             </div>
@@ -966,31 +966,32 @@
                 setTimeout(() => { heroVideo.classList.add('loaded'); }, 3000);
             }
         }
+    </script>
 
-        // People & Culture: Scroll-X Carousel
-        // Vertical scroll through the 300vh region drives horizontal translation of the strip
+    <!-- People & Culture: Scroll-X Carousel powered by motion (motion.dev)
+         Uses scroll() + animate() to bind vertical scroll progress to horizontal strip translateX
+         and progress bar scaleX — hardware-accelerated via ScrollTimeline where supported. -->
+    <script type="module">
+        import { scroll, animate } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
+
         const peopleSection = document.querySelector('.people__scroll-region');
         const peopleStrip = document.getElementById('peopleStrip');
         const peopleProgress = document.getElementById('peopleProgress');
+
         if (peopleSection && peopleStrip) {
-            function updatePeopleCarousel() {
-                const rect = peopleSection.getBoundingClientRect();
-                const sectionHeight = peopleSection.offsetHeight - window.innerHeight;
-                // How far through the scroll region are we? 0 = top, 1 = bottom
-                const scrolled = Math.max(0, Math.min(1, -rect.top / sectionHeight));
-                // Translate the strip: from 0% to -(stripWidth - viewportWidth)
-                const stripWidth = peopleStrip.scrollWidth;
-                const viewWidth = window.innerWidth;
-                const maxTranslate = stripWidth - viewWidth + 70; // 70px for right padding
-                const translateX = -scrolled * maxTranslate;
-                peopleStrip.style.transform = 'translateX(' + translateX + 'px)';
-                // Update progress bar
-                if (peopleProgress) {
-                    peopleProgress.style.width = (scrolled * 100) + '%';
-                }
+            // Animate the strip from 0% to -65% as the section scrolls through
+            scroll(
+                animate(peopleStrip, { transform: ['translateX(0%)', 'translateX(-65%)'] }, { ease: 'linear' }),
+                { target: peopleSection, offset: ['start start', 'end end'] }
+            );
+
+            // Animate the progress bar fill
+            if (peopleProgress) {
+                scroll(
+                    animate(peopleProgress, { transform: ['scaleX(0)', 'scaleX(1)'] }, { ease: 'linear' }),
+                    { target: peopleSection, offset: ['start start', 'end end'] }
+                );
             }
-            window.addEventListener('scroll', updatePeopleCarousel, { passive: true });
-            updatePeopleCarousel();
         }
     </script>
 
