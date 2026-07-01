@@ -211,34 +211,36 @@
         .map-section__image img { width: auto; height: auto; display: block; max-height: 800px; object-fit: contain; object-position: left center; }
         .map-section__text-col { padding-left: 0; }
 
-        /* --- 10. PEOPLE & CULTURE (Scroll-X Carousel — Motion) --- */
+        /* --- 10. PEOPLE & CULTURE (Stacked Scroll-X — 2 rows, opposite directions) --- */
         .people { background: #FFFFFF; position: relative; }
         .people__scroll-region { height: 300vh; position: relative; width: 100vw; max-width: 100%; }
-        .people__sticky { position: sticky; top: 0; left: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
-        .people__top { text-align: left; padding: 0 70px; margin-bottom: 40px; }
+        .people__sticky { position: sticky; top: 0; left: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+        .people__top { text-align: left; padding: 0 70px; margin-bottom: 24px; }
         .people__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
         .people__title { color: #202020; font-size: 39px; font-weight: 500; margin-bottom: 16px; }
         .people__text { color: #353535; max-width: 540px; font-size: 16px; }
-        .people__strip { display: flex; gap: 24px; padding: 0 70px; width: fit-content; will-change: transform; }
-        .people__card { flex-shrink: 0; width: 480px; border-radius: 12px; overflow: hidden; }
-        .people__card img { width: 100%; height: 360px; object-fit: cover; display: block; border-radius: 12px; }
-        .people__progress-wrap { position: absolute; bottom: 40px; left: 70px; right: 70px; height: 3px; background: rgba(53,53,53,0.08); border-radius: 2px; overflow: hidden; }
+        .people__rows { display: flex; flex-direction: column; gap: 24px; overflow: hidden; }
+        .people__row { display: flex; gap: 24px; width: fit-content; will-change: transform; }
+        .people__card { flex-shrink: 0; width: 420px; border-radius: 12px; overflow: hidden; }
+        .people__card img { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 12px; }
+        .people__progress-wrap { padding: 0 70px; margin-top: 24px; }
+        .people__progress-track { height: 3px; background: rgba(53,53,53,0.08); border-radius: 2px; overflow: hidden; }
         .people__progress-fill { height: 100%; background: #CCDB2A; border-radius: 2px; transform-origin: left; transform: scaleX(0); }
 
         @media (max-width: 1024px) {
             .people__top { padding: 0 40px; }
-            .people__strip { padding: 0 40px; gap: 20px; }
-            .people__card { width: 400px; }
-            .people__card img { height: 300px; }
-            .people__progress-wrap { left: 40px; right: 40px; }
+            .people__card { width: 350px; }
+            .people__card img { height: 240px; }
+            .people__progress-wrap { padding: 0 40px; }
         }
         @media (max-width: 768px) {
             .people__scroll-region { height: 250vh; }
             .people__top { padding: 0 24px; }
-            .people__strip { padding: 0 24px; gap: 16px; }
-            .people__card { width: 300px; }
-            .people__card img { height: 220px; }
-            .people__progress-wrap { left: 24px; right: 24px; }
+            .people__rows { gap: 16px; }
+            .people__row { gap: 16px; }
+            .people__card { width: 260px; }
+            .people__card img { height: 180px; }
+            .people__progress-wrap { padding: 0 24px; }
         }
 
 
@@ -707,8 +709,8 @@
     </section>
 
     <!-- === 10. PEOPLE & CULTURE ===
-         Scroll-X Carousel: vertical scroll drives horizontal strip movement.
-         Section is 300vh tall; inner content is sticky with overflow hidden. -->
+         Stacked Scroll-X: 2 rows moving in opposite directions on scroll.
+         Top row scrolls left, bottom row scrolls right. Powered by motion.dev. -->
     <section class="people" id="peopleSection">
         <div class="people__scroll-region">
             <div class="people__sticky">
@@ -717,25 +719,28 @@
                     <h2 class="people__title" data-reveal data-delay="1">Our People and Culture</h2>
                     <p class="people__text" data-reveal data-delay="2">Behind the scenes, our vibrant team at Ozcast are there to ensure we deliver the best experience for our customers.</p>
                 </div>
-                <div class="people__strip" id="peopleStrip">
-                    <div class="people__card">
-                        <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team culture" loading="lazy">
+                <div class="people__rows">
+                    <!-- Row 1: scrolls LEFT on scroll down -->
+                    <div class="people__row" id="peopleRow1">
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
                     </div>
-                    <div class="people__card">
-                        <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team culture" loading="lazy">
-                    </div>
-                    <div class="people__card">
-                        <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast team culture" loading="lazy">
-                    </div>
-                    <div class="people__card">
-                        <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team culture" loading="lazy">
-                    </div>
-                    <div class="people__card">
-                        <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast team culture" loading="lazy">
+                    <!-- Row 2: scrolls RIGHT on scroll down (starts offset) -->
+                    <div class="people__row" id="peopleRow2" style="transform: translateX(-40%);">
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
+                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team" loading="lazy"></div>
                     </div>
                 </div>
                 <div class="people__progress-wrap">
-                    <div class="people__progress-fill" id="peopleProgress"></div>
+                    <div class="people__progress-track">
+                        <div class="people__progress-fill" id="peopleProgress"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -968,24 +973,30 @@
         }
     </script>
 
-    <!-- People & Culture: Scroll-X Carousel powered by motion (motion.dev)
-         Uses scroll() + animate() to bind vertical scroll progress to horizontal strip translateX
-         and progress bar scaleX — hardware-accelerated via ScrollTimeline where supported. -->
+    <!-- People & Culture: Stacked Scroll-X powered by motion (motion.dev)
+         Row 1 scrolls left, Row 2 scrolls right. Opposite directions on vertical scroll. -->
     <script type="module">
         import { scroll, animate } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
 
         const peopleSection = document.querySelector('.people__scroll-region');
-        const peopleStrip = document.getElementById('peopleStrip');
+        const row1 = document.getElementById('peopleRow1');
+        const row2 = document.getElementById('peopleRow2');
         const peopleProgress = document.getElementById('peopleProgress');
 
-        if (peopleSection && peopleStrip) {
-            // Animate the strip from 0% to -65% as the section scrolls through
+        if (peopleSection && row1 && row2) {
+            // Row 1: starts at 0, scrolls LEFT
             scroll(
-                animate(peopleStrip, { transform: ['translateX(0%)', 'translateX(-65%)'] }, { ease: 'linear' }),
+                animate(row1, { transform: ['translateX(0%)', 'translateX(-40%)'] }, { ease: 'linear' }),
                 { target: peopleSection, offset: ['start start', 'end end'] }
             );
 
-            // Animate the progress bar fill
+            // Row 2: starts offset left, scrolls RIGHT (back toward 0)
+            scroll(
+                animate(row2, { transform: ['translateX(-40%)', 'translateX(0%)'] }, { ease: 'linear' }),
+                { target: peopleSection, offset: ['start start', 'end end'] }
+            );
+
+            // Progress bar
             if (peopleProgress) {
                 scroll(
                     animate(peopleProgress, { transform: ['scaleX(0)', 'scaleX(1)'] }, { ease: 'linear' }),
