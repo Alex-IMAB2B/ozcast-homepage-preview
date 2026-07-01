@@ -213,7 +213,7 @@
 
         /* --- 10. PEOPLE & CULTURE (Stacked Scroll-X — 2 rows, opposite directions) --- */
         .people { background: #FFFFFF; position: relative; }
-        .people__scroll-region { height: 300vh; position: relative; width: 100vw; max-width: 100%; }
+        .people__scroll-region { height: 200vh; position: relative; width: 100vw; max-width: 100%; }
         .people__sticky { position: sticky; top: 0; left: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
         .people__top { text-align: left; padding: 0 70px; margin-bottom: 24px; }
         .people__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
@@ -223,24 +223,19 @@
         .people__row { display: flex; gap: 24px; width: fit-content; will-change: transform; }
         .people__card { flex-shrink: 0; width: 420px; border-radius: 12px; overflow: hidden; }
         .people__card img { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 12px; }
-        .people__progress-wrap { padding: 0 70px; margin-top: 24px; }
-        .people__progress-track { height: 3px; background: rgba(53,53,53,0.08); border-radius: 2px; overflow: hidden; }
-        .people__progress-fill { height: 100%; background: #CCDB2A; border-radius: 2px; transform-origin: left; transform: scaleX(0); }
 
         @media (max-width: 1024px) {
             .people__top { padding: 0 40px; }
             .people__card { width: 350px; }
             .people__card img { height: 240px; }
-            .people__progress-wrap { padding: 0 40px; }
         }
         @media (max-width: 768px) {
-            .people__scroll-region { height: 250vh; }
+            .people__scroll-region { height: 180vh; }
             .people__top { padding: 0 24px; }
             .people__rows { gap: 16px; }
             .people__row { gap: 16px; }
             .people__card { width: 260px; }
             .people__card img { height: 180px; }
-            .people__progress-wrap { padding: 0 24px; }
         }
 
 
@@ -737,11 +732,6 @@
                         <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team" loading="lazy"></div>
                     </div>
                 </div>
-                <div class="people__progress-wrap">
-                    <div class="people__progress-track">
-                        <div class="people__progress-fill" id="peopleProgress"></div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -974,35 +964,26 @@
     </script>
 
     <!-- People & Culture: Stacked Scroll-X powered by motion (motion.dev)
-         Row 1 scrolls left, Row 2 scrolls right. Opposite directions on vertical scroll. -->
+         Row 1 scrolls left, Row 2 scrolls right. Starts animating as section enters viewport. -->
     <script type="module">
         import { scroll, animate } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
 
         const peopleSection = document.querySelector('.people__scroll-region');
         const row1 = document.getElementById('peopleRow1');
         const row2 = document.getElementById('peopleRow2');
-        const peopleProgress = document.getElementById('peopleProgress');
 
         if (peopleSection && row1 && row2) {
-            // Row 1: starts at 0, scrolls LEFT
+            // Row 1: scrolls LEFT
             scroll(
                 animate(row1, { transform: ['translateX(0%)', 'translateX(-40%)'] }, { ease: 'linear' }),
-                { target: peopleSection, offset: ['start start', 'end end'] }
+                { target: peopleSection, offset: ['start end', 'end start'] }
             );
 
-            // Row 2: starts offset left, scrolls RIGHT (back toward 0)
+            // Row 2: scrolls RIGHT (starts offset, returns toward 0)
             scroll(
                 animate(row2, { transform: ['translateX(-40%)', 'translateX(0%)'] }, { ease: 'linear' }),
-                { target: peopleSection, offset: ['start start', 'end end'] }
+                { target: peopleSection, offset: ['start end', 'end start'] }
             );
-
-            // Progress bar
-            if (peopleProgress) {
-                scroll(
-                    animate(peopleProgress, { transform: ['scaleX(0)', 'scaleX(1)'] }, { ease: 'linear' }),
-                    { target: peopleSection, offset: ['start start', 'end end'] }
-                );
-            }
         }
     </script>
 
