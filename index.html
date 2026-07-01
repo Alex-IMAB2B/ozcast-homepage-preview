@@ -981,12 +981,15 @@
         // Hero video loading state — fade in on canplay
         const heroVideo = document.querySelector('.hero__video-bg video');
         if (heroVideo) {
-            if (heroVideo.readyState >= 3) {
+            // Video may already be playing if autoplay beat the script load
+            if (heroVideo.readyState >= 3 || !heroVideo.paused || heroVideo.currentTime > 0) {
                 heroVideo.classList.add('loaded');
             } else {
                 heroVideo.addEventListener('canplay', () => {
                     heroVideo.classList.add('loaded');
                 }, { once: true });
+                // Fallback: if canplay never fires (e.g. network stall), show after 3s
+                setTimeout(() => { heroVideo.classList.add('loaded'); }, 3000);
             }
         }
     </script>
