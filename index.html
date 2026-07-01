@@ -301,14 +301,15 @@
             .nav__burger { display: block; }
             .hero__content { padding-left: 24px; margin-left: 0; max-width: 100%; }
             .hero__title { font-size: 36px; }
+            .hero__title .word { animation: none !important; opacity: 1; filter: none; transform: none; }
             .projects__grid { grid-template-columns: 1fr; }
-            .project-card--featured .project-card__image { aspect-ratio: 16 / 10; }
+            .project-card--featured .project-card__image { aspect-ratio: 16 / 7; }
+            .project-card--featured .project-card__name { font-size: clamp(18px, 1.6vw, 22px); max-width: 100%; }
+            .projects-intro__cta .btn-arrow { display: inline-flex; }
             .footer__upper { padding: 40px 24px 20px; }
             .footer__upper-row { grid-template-columns: 1fr; gap: 32px; }
             .footer__lower { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
             .people__top { padding: 0 24px; }
-            .people-swiper .swiper-slide { width: 300px; }
-            .people-swiper .swiper-slide img { height: 220px; }
         }
 
         @media (max-width: 480px) {
