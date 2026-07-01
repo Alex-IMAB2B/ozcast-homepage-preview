@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ozcast Homepage Concept — Full Page Mockup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           OZCAST HOMEPAGE CONCEPT — FULL PAGE MOCKUP (ALL 13 SECTIONS)
+           Designer: #designer | Date: 2026-05-29
+           
+           COLOUR PALETTE (from live site computed styles):
+           - Charcoal:         #202020  — dark section backgrounds, h2 headings
+           - Near-black:       #282829  — button text on lime bg
+           - Body text:        #353535  — primary body copy
+           - Nav text:         #0B0B0B  — navigation links
+           - CTA accent:       #CCDB2A  — lime/chartreuse (buttons, accents)
+           - White:            #FFFFFF  — backgrounds, text on dark
+           - Light grey:       #CACACA  — body text on dark backgrounds
+           - Border accent:    1px solid #CCDB2A (header bottom border on live site)
+           
+           FONTS (from live site):
+           - Headings: Inter, sans-serif (500 weight)
+           - Body: Poppins, serif (300-600 weight)
+           
+           NOTES FOR DEVELOPER (Sonnet):
+           - All animations use IntersectionObserver — NO AOS, NO GSAP
+           - Elements render visible by default; animation is enhancement only
+           - Project cards: hover on desktop, always-visible info on mobile
+           - Video banner: left-to-right gradient for text legibility
+           - Stats: counter animation triggered by scroll
+           - Logo marquee: CSS-only infinite scroll
+           ========================================================================== */
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 1.6; color: #353535; background: #FFFFFF; overflow-x: hidden; max-width: 100vw; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; font-weight: 500; color: #202020; line-height: 1.15; }
+        img { max-width: 100%; height: auto; display: block; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1940px; margin: 0 auto; padding: 0 70px; }
+        .section-pad { padding: 100px 0; }
+
+        /* --- 1. NAVIGATION --- */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 11.5px 0; transition: background-color 0.25s ease, border-color 0.25s ease; border-bottom: 1px solid transparent; }
+        .nav--transparent { background: transparent; }
+        .nav--solid { background: #FFFFFF; border-bottom-color: #CCDB2A; }
+        .nav--solid .nav__logo img { filter: none; }
+        .nav--solid .nav__links a { color: #0B0B0B; }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; padding: 0 70px; }
+        .nav__logo img { height: 56px; width: auto; transition: filter 0.25s ease; }
+        .nav--transparent .nav__logo img { filter: brightness(0) invert(1); }
+        .nav__links { display: flex; gap: 32px; list-style: none; }
+        .nav__links a { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 500; color: #FFFFFF; transition: opacity 0.2s ease; position: relative; }
+        .nav--transparent .nav__links a { color: #FFFFFF; }
+        .nav__links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #CCDB2A; transition: width 0.3s ease; }
+        .nav__links a:hover::after { width: 100%; }
+        .nav__burger { display: none; background: none; border: none; cursor: pointer; }
+        .nav__burger svg { width: 32px; height: 32px; }
+        .nav--transparent .nav__burger svg path { fill: #FFFFFF; }
+        .nav--solid .nav__burger svg path { fill: #202020; }
+
+
+        /* --- 2. HERO / VIDEO BANNER --- */
+        .hero { position: relative; width: 100%; height: 100vh; min-height: 700px; display: flex; align-items: center; overflow: hidden; }
+        /* Simulated video background — NOW USING REAL VIDEO */
+        .hero__video-bg { position: absolute; inset: 0; background: #1a1a1a; }
+        .hero__video-bg video { width: 100%; height: 100%; object-fit: cover; }
+        /* Left-to-right gradient: protects text on left, video visible on right */
+        .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 30%, rgba(0,0,0,0.3) 50%, transparent 75%); z-index: 2; }
+        /* Top gradient for nav contrast */
+        .hero::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 120px; background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%); z-index: 2; }
+        .hero__content { position: relative; z-index: 3; max-width: 650px; margin-left: 70px; padding-top: 80px; }
+        .hero__kicker { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #CCDB2A; margin-bottom: 16px; opacity: 0; animation: heroReveal 0.8s ease-out 0.2s forwards; }
+        .hero__title { font-size: clamp(40px, 5vw, 64px); font-weight: 500; color: #FFFFFF; line-height: 1.08; margin-bottom: 20px; text-shadow: 0 2px 30px rgba(0,0,0,0.5); }
+        /* Word-split blur reveal on headline */
+        .hero__title .word { display: inline-block; opacity: 0; filter: blur(8px); animation: blurReveal 0.9s ease-out forwards; }
+        .hero__title .word:nth-child(1) { animation-delay: 0.1s; }
+        .hero__title .word:nth-child(2) { animation-delay: 0.2s; }
+        .hero__title .word:nth-child(3) { animation-delay: 0.3s; }
+        .hero__title .word:nth-child(4) { animation-delay: 0.4s; }
+        .hero__title .word:nth-child(5) { animation-delay: 0.5s; }
+        .hero__title .word:nth-child(6) { animation-delay: 0.6s; }
+        .hero__title .word:nth-child(7) { animation-delay: 0.7s; }
+        .hero__title .word:nth-child(8) { animation-delay: 0.8s; }
+        .hero__title .word:nth-child(9) { animation-delay: 0.9s; }
+        @keyframes blurReveal { 0% { opacity: 0; filter: blur(8px); transform: translateY(20px); } 100% { opacity: 1; filter: blur(0); transform: translateY(0); } }
+        .hero__sub { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 300; color: rgba(255,255,255,0.85); line-height: 1.5; margin-bottom: 32px; max-width: 460px; opacity: 0; animation: heroReveal 0.8s ease-out 0.7s forwards; }
+        .hero__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: #CCDB2A; color: #282829; font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 600; border-radius: 300px; height: 52px; transition: transform 0.2s ease, box-shadow 0.2s ease; opacity: 0; animation: heroReveal 0.8s ease-out 0.9s forwards; }
+        .hero__cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(204,219,42,0.3); }
+        .hero__cta .btn-arrow { width: 33px; height: 33px; background: #282829; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .hero__cta .btn-arrow svg { width: 16px; height: 16px; }
+        @keyframes heroReveal { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        .hero__scroll { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; opacity: 0; animation: heroReveal 0.8s ease-out 1.1s forwards; }
+        .hero__scroll-chevron { width: 24px; height: 24px; animation: scrollBounce 2s ease-in-out infinite; }
+        @keyframes scrollBounce { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(6px); opacity: 1; } }
+
+
+        /* --- 3. MISSION / ABOUT --- */
+        .mission { padding: 100px 0; background: #FFFFFF; }
+        .mission__inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: center; }
+        .mission__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
+        .mission__title { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 20px; max-width: 600px; }
+        .mission__text { font-size: 16px; color: #353535; line-height: 1.7; margin-bottom: 24px; max-width: 540px; }
+        .mission__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: #CCDB2A; color: #282829; font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; transition: transform 0.2s ease; }
+        .mission__cta:hover { transform: translateY(-2px); }
+        .mission__cta .btn-arrow { width: 33px; height: 33px; background: #282829; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .mission__cta .btn-arrow svg { width: 16px; height: 16px; }
+        .mission__image { border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; position: relative; }
+        .mission__image img { width: 100%; height: 100%; object-fit: cover; display: block; transform: translateY(0); transition: transform 0.1s linear; }
+
+        /* --- 4. PARTNER LOGOS MARQUEE --- */
+        .logos { padding: 60px 0 80px; background: #FFFFFF; border-top: 1px solid rgba(53,53,53,0.08); overflow: hidden; }
+        .logos__heading { text-align: center; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; color: #353535; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 32px; }
+        .logos__track { display: flex; animation: marqueeScroll 35s linear infinite; width: max-content; }
+        .logos__track:hover { animation-play-state: paused; }
+        .logos__set { display: flex; align-items: center; gap: 60px; padding: 0 30px; }
+        .logos__item { flex-shrink: 0; width: 120px; height: 48px; display: flex; align-items: center; justify-content: center; filter: grayscale(1) opacity(0.5); transition: filter 0.3s ease; }
+        .logos__item:hover { filter: grayscale(0) opacity(1); }
+        .logos__item img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+
+        /* --- 5. STATS / NUMBERS (NEW SECTION) --- */
+        .stats-wrapper { position: relative; }
+        .stats-wrapper::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 63px; z-index: 2; pointer-events: none; background: #CCDB2A; clip-path: polygon(0 60px, 100% 0, 100% 3px, 0 63px); }
+        .stats { background: #202020; padding: 120px 0 80px; position: relative; clip-path: polygon(0 60px, 100% 0, 100% 100%, 0 100%); }
+        .stats__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; }
+        .stats__item { padding: 20px; }
+        .stats__number { font-family: 'Inter', sans-serif; font-size: clamp(36px, 4vw, 56px); font-weight: 500; color: #FFFFFF; line-height: 1; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .stats__number .suffix { font-size: 0.6em; color: #CCDB2A; display: inline-flex; align-items: center; }
+        .stats__label { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 400; color: #CACACA; text-transform: uppercase; letter-spacing: 1.5px; }
+        .stats__tbc { display: block; font-size: 10px; color: rgba(204,219,42,0.6); margin-top: 6px; font-style: italic; letter-spacing: 0; text-transform: none; }
+
+        /* --- 6. PROJECTS INTRO --- */
+        .projects-intro { padding: 80px 0 40px; background: #FFFFFF; }
+        .projects-intro__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
+        .projects-intro__title { font-size: clamp(36px, 4vw, 56px); max-width: 700px; margin-bottom: 16px; }
+        .projects-intro__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: #CCDB2A; color: #282829; font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; transition: transform 0.2s ease; margin-top: 12px; }
+        .projects-intro__cta:hover { transform: translateY(-2px); }
+        .projects-intro__cta .btn-arrow { width: 33px; height: 33px; background: #282829; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+
+        /* --- 7. PROJECT GRID (Hutchinson-inspired: always-visible title + hover enhancement) --- */
+        .projects { padding: 0 0 100px; background: #FFFFFF; }
+        .projects__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        /* Featured first card spans full width */
+        .project-card--featured { grid-column: 1 / -1; }
+        .project-card--featured .project-card__image { aspect-ratio: 21 / 7; }
+        .project-card { position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; display: block; }
+        .project-card__image { position: relative; width: 100%; aspect-ratio: 16 / 7; overflow: hidden; border-radius: 12px; background: #2a3a4a; }
+        .project-card__image::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 -60px 40px -20px rgba(0,0,0,0.15); border-radius: 12px; pointer-events: none; }
+        .project-card__image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+        .project-card:hover .project-card__image img { transform: scale(1.03); }
+
+        /* Always-visible info bar below image */
+        .project-card__info { padding: 20px 4px 28px; }
+        .project-card__client { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #353535; opacity: 0.6; margin-bottom: 6px; }
+        .project-card__name { font-family: 'Inter', sans-serif; font-size: clamp(18px, 1.6vw, 22px); font-weight: 500; color: #202020; margin-bottom: 14px; line-height: 1.25; }
+        .project-card--featured .project-card__name { font-size: clamp(26px, 2.5vw, 36px); max-width: 50%; }
+
+        @media (max-width: 768px) {
+            .project-card--featured .project-card__name { max-width: 100%; }
+        }
+        .project-card__tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .project-card__tag { font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 400; padding: 5px 12px; border-radius: 60px; border: 1px solid #CCDB2A; background: transparent; color: #353535; }
+        .project-card__tag--highlight { background: rgba(204,219,42,0.1); }
+
+        /* Hover: subtle overlay with arrow indicator */
+        .project-card__arrow { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%; background: #CCDB2A; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translate(4px, -4px); transition: opacity 0.3s ease, transform 0.3s ease; z-index: 2; }
+        .project-card:hover .project-card__arrow { opacity: 1; transform: translate(0, 0); }
+        .project-card__arrow svg { width: 18px; height: 18px; color: #282829; }
+
+
+        /* --- 8. CTA BANNER --- */
+        .cta-banner { position: relative; padding: 280px 0; overflow: hidden; }
+        .cta-banner__bg { position: absolute; inset: -180px 0; }
+        .cta-banner__bg img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+        .cta-banner__bg::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
+        .cta-banner__content { position: relative; z-index: 2; text-align: center; max-width: 700px; margin: 0 auto; }
+        .cta-banner__title { font-size: clamp(24px, 3vw, 36px); color: #FFFFFF; margin-bottom: 24px; line-height: 1.3; text-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+        .cta-banner__btn { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: #CCDB2A; color: #282829; font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; transition: transform 0.2s ease; }
+        .cta-banner__btn:hover { transform: translateY(-2px); }
+        .cta-banner__btn .btn-arrow { width: 33px; height: 33px; background: #282829; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .cta-banner__btn .btn-arrow svg { width: 16px; height: 16px; }
+
+        /* --- 9. PROJECT MAP --- */
+        .map-section { padding: 80px 0; background: #FFFFFF; }
+        .map-section__inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; align-items: center; }
+        .map-section__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
+        .map-section__title { font-size: 28px; margin-bottom: 16px; }
+        .map-section__text { color: #353535; line-height: 1.7; margin-bottom: 20px; max-width: 540px; }
+        .map-section__keys { display: flex; gap: 20px; margin-top: 16px; }
+        .map-section__key { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #353535; }
+        .map-section__key img { width: 28px; height: 28px; }
+        .map-section__image { margin-left: -70px; overflow: hidden; max-height: 800px; display: flex; align-items: flex-start; }
+        .map-section__image img { width: auto; height: auto; display: block; max-height: 800px; object-fit: contain; object-position: left center; }
+        .map-section__text-col { padding-left: 0; }
+
+        /* --- 10. PEOPLE & CULTURE (Swiper Coverflow) --- */
+        .people { background: #FFFFFF; padding: 77px 0 62px; position: relative; overflow: hidden; }
+        .people__top { text-align: left; padding: 0 100px; margin-bottom: 60px; }
+        .people__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
+        .people__title { color: #202020; font-size: 39px; font-weight: 500; margin-bottom: 16px; }
+        .people__text { color: #353535; max-width: 540px; font-size: 16px; }
+        .people-swiper { width: 100%; padding-bottom: 20px; }
+        .people-swiper .swiper-slide { width: 600px; border-radius: 12px; overflow: hidden; cursor: pointer; }
+        .people-swiper .swiper-slide-active { cursor: grab; }
+        .people-swiper .swiper-slide-active:active { cursor: grabbing; }
+        .people-swiper .swiper-slide-prev,
+        .people-swiper .swiper-slide-prev ~ .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next) { cursor: w-resize; }
+        .people-swiper .swiper-slide-next,
+        .people-swiper .swiper-slide-next ~ .swiper-slide { cursor: e-resize; }
+        .people-swiper .swiper-slide img { width: 100%; height: 420px; object-fit: cover; display: block; }
+        .people-swiper .swiper-pagination { position: relative; margin-top: 24px; }
+        .people-swiper .swiper-pagination-bullet { background: rgba(53,53,53,0.3); opacity: 1; width: 10px; height: 10px; }
+        .people-swiper .swiper-pagination-bullet-active { background: #CCDB2A; }
+
+
+        /* --- 11. CERTIFICATIONS --- */
+        .certs { padding: 80px 0; background: #FFFFFF; text-align: center; }
+        .certs__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
+        .certs__title { font-size: clamp(24px, 2.5vw, 32px); margin-bottom: 16px; }
+        .certs__text { color: #353535; max-width: 540px; margin: 0 auto 32px; }
+        .certs__logos { display: flex; justify-content: center; gap: 40px; align-items: center; }
+        .certs__logo { width: 80px; height: 80px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .certs__logo img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* --- 12. SOCIAL FEED --- */
+        .social { padding: 80px 0; background: #FFFFFF; border-top: 1px solid rgba(53,53,53,0.08); }
+        .social__top { text-align: center; margin-bottom: 32px; }
+        .social__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
+        .social__title { font-size: 28px; }
+
+        /* --- 13. FOOTER (matching live site structure) --- */
+        .footer { background: transparent; border-top: 1px solid rgba(53,53,53,0.08); position: relative; overflow: hidden; }
+        .footer__shader-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+        .footer__shader-bg canvas { width: 100% !important; height: 100% !important; display: block; }
+        .footer__upper { padding: 100px 70px 100px; position: relative; z-index: 1; background: rgba(255,255,255,0.35); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+        .footer__upper-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+        .footer__col h5 { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 500; color: #202020; margin-bottom: 12px; }        .footer__col p, .footer__col li { font-size: 15px; color: #353535; line-height: 1.8; }
+        .footer__col ul { list-style: none; }
+        .footer__col a { color: #353535; transition: color 0.2s ease; }
+        .footer__col a:hover { color: #0B0B0B; }
+        .footer__cta { display: inline-flex; align-items: center; gap: 4px; font-size: 16px; font-weight: 600; color: #0B0B0B; margin-top: 12px; }
+        .footer__cta svg { width: 20px; height: 20px; }
+        .footer__social { display: flex; gap: 16px; margin-top: 12px; }
+        .footer__social a { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #CCDB2A; background: #FFFFFF; border: 1.5px solid #CCDB2A; border-radius: 50%; transition: background 0.2s ease; }
+        .footer__social a:hover { background: rgba(204,219,42,0.1); }
+        .footer__social svg { width: 22px; height: 22px; }
+        .footer__lower { padding: 30px 70px; border-top: 1px solid rgba(53,53,53,0.08); display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.75); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); position: relative; z-index: 1; }
+        .footer__lower-logo img { height: 32px; width: auto; }
+        .footer__lower-links { display: flex; gap: 24px; }
+        .footer__lower-links a { font-size: 12px; color: #000; }
+        .footer__copyright { font-size: 12px; color: #000; }
+
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .container { padding: 0 40px; }
+            .nav__inner { padding: 0 40px; }
+            .hero__content { margin-left: 40px; }
+            .stats__grid { grid-template-columns: repeat(2, 1fr); }
+            .mission__inner { grid-template-columns: 1fr; gap: 40px; }
+            .map-section__inner { grid-template-columns: 1fr; }
+            .map-section__image { order: -1; margin-left: -40px; }
+            .map-section__text-col { padding-left: 0; padding-top: 32px; }
+            .people__top { padding: 0 40px; }
+            .people-swiper .swiper-slide { width: 500px; }
+            .people-swiper .swiper-slide img { height: 360px; }
+            .footer__upper-row { grid-template-columns: repeat(2, 1fr); }
+            .footer__upper { padding: 50px 40px 30px; }
+            .footer__lower { padding: 30px 40px; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 24px; }
+            .nav__inner { padding: 0 24px; }
+            .nav__links { display: none; }
+            .nav__burger { display: block; }
+            .hero__content { padding-left: 24px; margin-left: 0; max-width: 100%; }
+            .hero__title { font-size: 36px; }
+            .projects__grid { grid-template-columns: 1fr; }
+            .project-card--featured .project-card__image { aspect-ratio: 16 / 10; }
+            .footer__upper { padding: 40px 24px 20px; }
+            .footer__upper-row { grid-template-columns: 1fr; gap: 32px; }
+            .footer__lower { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+            .people__top { padding: 0 24px; }
+            .people-swiper .swiper-slide { width: 300px; }
+            .people-swiper .swiper-slide img { height: 220px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats__grid { grid-template-columns: 1fr; }
+        }
+
+        /* --- SCROLL REVEAL (IntersectionObserver) --- */
+        /* Elements render visible by default. Animation is enhancement only. */
+        [data-reveal] {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        [data-reveal]:not(.revealed) {
+            opacity: 0;
+            transform: translateY(32px);
+        }
+        [data-reveal][data-delay="1"] { transition-delay: 0.1s; }
+        [data-reveal][data-delay="2"] { transition-delay: 0.2s; }
+        [data-reveal][data-delay="3"] { transition-delay: 0.3s; }
+        [data-reveal][data-delay="4"] { transition-delay: 0.4s; }
+
+        /* Dev note styling */
+        .dev-note { background: rgba(204,219,42,0.06); border-left: 3px solid #CCDB2A; padding: 12px 16px; margin: 16px 0; font-size: 12px; color: #353535; border-radius: 0 4px 4px 0; }
+        .dev-note strong { color: #202020; }
+    </style>
+</head>
+<body>
+
+    <!-- === 1. NAVIGATION === -->
+    <nav class="nav nav--transparent" id="mainNav">
+        <div class="nav__inner">
+            <a href="/" class="nav__logo">
+                <img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-ozcast.svg" alt="Ozcast" width="195" height="56">
+            </a>
+            <ul class="nav__links">
+                <li><a href="/about-us/">About Us</a></li>
+                <li><a href="/projects/">Projects</a></li>
+                <li><a href="/services/">Services</a></li>
+                <li><a href="/product-listing/">Products</a></li>
+                <li><a href="/blog/">Blog</a></li>
+                <li><a href="/contact/">Contact</a></li>
+            </ul>
+            <button class="nav__burger" aria-label="Menu">
+                <svg viewBox="0 0 40 40" fill="none"><path d="M6.67 30h26.66a1.67 1.67 0 000-3.33H6.67a1.67 1.67 0 000 3.33zm0-8.33h26.66a1.67 1.67 0 000-3.34H6.67a1.67 1.67 0 000 3.34zM5 11.67c0 .91.75 1.66 1.67 1.66h26.66a1.67 1.67 0 000-3.33H6.67C5.75 10 5 10.75 5 11.67z" fill="#202020"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- === 2. HERO — FULL-SCREEN VIDEO BANNER ===
+         Testing OZC0027-Berry to Bomaderry-d02.webm as hero background.
+         The gradient overlay ensures text legibility regardless of video content. -->
+    <section class="hero">
+        <div class="hero__video-bg">
+            <video autoplay muted loop playsinline>
+                <source src="https://www.imab2b.com/wp-content/uploads/2026/06/OZC0027-Berry-to-Bomaderry-d02.webm" type="video/webm">
+                <!-- Fallback: Pexels stock if webm doesn't load -->
+                <source src="https://videos.pexels.com/video-files/11778573/11778573-hd_1920_1080_60fps.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="hero__content">
+            <p class="hero__kicker">Australia's #1 Parapet Specialist</p>
+            <h1 class="hero__title"><span class="word">Setting</span> <span class="word">the</span> <span class="word">standard</span> <span class="word">in</span> <span class="word">parapets</span> <span class="word">across</span> <span class="word">Australian</span> <span class="word">infrastructure</span> <span class="word">projects</span></h1>
+            <p class="hero__sub">Trusted by the nation's leading contractors for precision precast at scale.</p>
+            <a href="/projects/" class="hero__cta">
+                View our parapet projects
+                <span class="btn-arrow"><svg viewBox="0 0 25 24" fill="none"><path d="M15.931 13.325H4.053V10.675H15.931L10.642 5.386L12.533 3.52L21.014 12L12.533 20.48L10.642 18.614L15.931 13.325Z" fill="#CBDB2A"/></svg></span>
+            </a>
+        </div>
+        <div class="hero__scroll">
+            <span>Scroll</span>
+            <svg class="hero__scroll-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+    </section>
+
+    <!-- === 3. MISSION / ABOUT ===
+         CHANGE: Add image on right side. Tighten copy to lead with specialist positioning. -->
+    <section class="mission">
+        <div class="container">
+            <div class="mission__inner">
+                <div class="mission__copy">
+                    <span class="mission__pill" data-reveal>Mission</span>
+                    <h2 class="mission__title" data-reveal data-delay="1">Providing the highest quality precast concrete products</h2>
+                    <p class="mission__text" data-reveal data-delay="2">With over a decade of specialist expertise in parapet manufacturing, Ozcast delivers precision precast elements for Australia's most demanding infrastructure projects. Our ISO-accredited processes ensure every parapet meets the exacting standards Tier 1 contractors require.</p>
+                    <a href="/about-us/" class="mission__cta" data-reveal data-delay="3">About Us <span class="btn-arrow"><svg viewBox="0 0 25 24" fill="none"><path d="M15.931 13.325H4.053V10.675H15.931L10.642 5.386L12.533 3.52L21.014 12L12.533 20.48L10.642 18.614L15.931 13.325Z" fill="#CBDB2A"/></svg></span></a>
+                </div>
+                <div class="mission__image">
+                    <img src="https://www.imab2b.com/wp-content/uploads/2026/06/mg_6228-scaled-1.jpg" alt="Ozcast precast concrete parapet manufacturing" class="mission__parallax-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === 4. PARTNER LOGOS (EXPANDED MARQUEE) ===
+         Using real logos from the live site. CSS-only infinite scroll. -->
+    <section class="logos">
+        <p class="logos__heading">Trusted by Australia's Tier 1 contractors</p>
+        <div class="logos__track">
+            <div class="logos__set">
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/logos-01.png" alt="Abergeldie"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/logos-03.png" alt="BMD"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/logos-02.png" alt="Georgiou"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-1.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-2.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-3.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-4.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-5.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-6.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-7.svg" alt="Partner"></div>
+            </div>
+            <div class="logos__set">
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/logos-01.png" alt="Abergeldie"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/logos-03.png" alt="BMD"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/logos-02.png" alt="Georgiou"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-1.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-2.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-3.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-4.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-5.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-6.svg" alt="Partner"></div>
+                <div class="logos__item"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/logo-7.svg" alt="Partner"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === 5. STATS / NUMBERS (NEW) ===
+         Numbers are PLACEHOLDER — TBC, awaiting client confirmation.
+         Counter animation: 0 → target over 1.5s, IntersectionObserver triggered. -->
+    <div class="stats-wrapper">
+    <section class="stats" id="statsSection">
+        <div class="container">
+            <div class="stats__grid">
+                <div class="stats__item">
+                    <div class="stats__number"><span class="counter" data-target="10000">10,000</span><span class="suffix">+</span></div>
+                    <div class="stats__label">Parapets Delivered<span class="stats__tbc">TBC — awaiting client confirmation</span></div>
+                </div>
+                <div class="stats__item">
+                    <div class="stats__number"><span class="counter" data-target="85">85</span><span class="suffix">+</span></div>
+                    <div class="stats__label">Infrastructure Projects<span class="stats__tbc">TBC — awaiting client confirmation</span></div>
+                </div>
+                <div class="stats__item">
+                    <div class="stats__number"><span class="counter" data-target="15">15</span><span class="suffix">+</span></div>
+                    <div class="stats__label">Years Experience<span class="stats__tbc">TBC — awaiting client confirmation</span></div>
+                </div>
+                <div class="stats__item">
+                    <div class="stats__number"><span class="counter" data-target="45">45</span><span class="suffix">km+</span></div>
+                    <div class="stats__label">Barriers Delivered<span class="stats__tbc">TBC — awaiting client confirmation</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- === 6. PROJECTS INTRO === -->
+    <section class="projects-intro">
+        <div class="container">
+            <span class="projects-intro__pill" data-reveal>Projects</span>
+            <h2 class="projects-intro__title" data-reveal data-delay="1">Parapet projects across Australia's major infrastructure</h2>
+        </div>
+    </section>
+
+    <!-- === 7. PROJECT GRID ===
+         Hover: Desktop gets colour wash overlay. Mobile shows info below card.
+         Cards reordered: parapet-heavy projects first.
+         Using REAL project data and images from the live site. -->
+    <section class="projects">
+        <div class="container">
+            <div class="projects__grid">
+
+                <!-- Card 1: M12 Crossing (Parapets, Panels, Rail) -->
+                <a href="https://www.ozcast.com.au/projects_cpt/m12-crossing-for-sydney-metro-line-to-western-sydney-international-airport/" class="project-card project-card--featured">
+                    <div class="project-card__image">
+                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/10/p2250512-1440x649-1.jpg" alt="M12 Crossing">
+                        <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+                    </div>
+                    <div class="project-card__info">
+                        <h3 class="project-card__name">M12 Crossing for Sydney Metro Line to Western Sydney International Airport</h3>
+                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Structural</span></div>
+                    </div>
+                </a>
+
+                <!-- Card 2: Warringah Freeway (Parapets, Panels, Noise walls) -->
+                <a href="https://www.ozcast.com.au/projects_cpt/warringah-freeway-upgrade/" class="project-card">
+                    <div class="project-card__image">
+                        <img src="https://www.ozcast.com.au/wp-content/uploads/2024/08/DJI_0482-1.jpg" alt="Warringah Freeway Upgrade">
+                        <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+                    </div>
+                    <div class="project-card__info">
+                        <span class="project-card__client">CPB/Downer JV</span>
+                        <h3 class="project-card__name">Warringah Freeway Upgrade</h3>
+                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Noise walls</span></div>
+                    </div>
+                </a>
+
+                <!-- Card 3: Sydney Metro Viaduct (Parapets, Panels, Structural) -->
+                <a href="https://www.ozcast.com.au/projects_cpt/sydney-metro-viaduct/" class="project-card">
+                    <div class="project-card__image">
+                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/02/dji_0517-1.jpg" alt="Sydney Metro Viaduct">
+                        <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+                    </div>
+                    <div class="project-card__info">
+                        <span class="project-card__client">CPB United Infrastructure JV</span>
+                        <h3 class="project-card__name">Sydney Metro Viaduct</h3>
+                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Structural</span></div>
+                    </div>
+                </a>
+
+                <!-- Card 4: Sydney Gateway (Parapets, Panels, Retaining walls) -->
+                <a href="https://www.ozcast.com.au/projects_cpt/sydney-gateway/" class="project-card">
+                    <div class="project-card__image">
+                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/02/P1750532-1.jpg" alt="Sydney Gateway">
+                        <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+                    </div>
+                    <div class="project-card__info">
+                        <span class="project-card__client">John Holland Seymour Whyte JV</span>
+                        <h3 class="project-card__name">Sydney Gateway</h3>
+                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Retaining walls</span></div>
+                    </div>
+                </a>
+
+                <!-- Card 5: Heathcote Road (Panels, Noise walls) -->
+                <a href="https://www.ozcast.com.au/projects_cpt/heathcote-road-upgrade/" class="project-card">
+                    <div class="project-card__image">
+                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/02/dji-0470-min-2.jpg" alt="Heathcote Road Upgrade">
+                        <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+                    </div>
+                    <div class="project-card__info">
+                        <span class="project-card__client">SD Group</span>
+                        <h3 class="project-card__name">Heathcote Road Upgrade</h3>
+                        <div class="project-card__tags"><span class="project-card__tag">Panels</span><span class="project-card__tag">Noise walls</span></div>
+                    </div>
+                </a>
+
+                <!-- Card 6: Dulwich Hill Station (Panels, Structural) -->
+                <a href="https://www.ozcast.com.au/projects_cpt/dulwich-hill-station-service-building/" class="project-card">
+                    <div class="project-card__image">
+                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/02/dji_0502-min-scaled-1-1.jpg" alt="Dulwich Hill Station Service Building">
+                        <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+                    </div>
+                    <div class="project-card__info">
+                        <span class="project-card__client">Burley Constructions</span>
+                        <h3 class="project-card__name">Dulwich Hill Station Service Building</h3>
+                        <div class="project-card__tags"><span class="project-card__tag">Panels</span><span class="project-card__tag">Structural</span></div>
+                    </div>
+                </a>
+
+            </div>
+            <!-- View all projects button at bottom of grid -->
+            <div style="text-align: center; padding-top: 48px;">
+                <a href="/projects/" class="projects-intro__cta">
+                    View all projects
+                    <span class="btn-arrow"><svg viewBox="0 0 25 24" fill="none"><path d="M15.931 13.325H4.053V10.675H15.931L10.642 5.386L12.533 3.52L21.014 12L12.533 20.48L10.642 18.614L15.931 13.325Z" fill="#CBDB2A"/></svg></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- === 8. CTA BANNER ===
+         Background: _MG_6486(1) — Ozcast worker with rebar cage in factory.
+         Subtle parallax on scroll (20-30px vertical shift). -->
+    <section class="cta-banner" id="ctaBanner">
+        <div class="cta-banner__bg">
+            <img src="https://www.imab2b.com/wp-content/uploads/2026/06/MG_64861.jpg" alt="" loading="lazy" class="cta-banner__parallax-img">
+        </div>
+        <div class="container">
+            <div class="cta-banner__content">
+                <h2 class="cta-banner__title">Your next infrastructure project needs parapets built right. Let's talk.</h2>
+                <a href="/contact/" class="cta-banner__btn">
+                    Discuss your project
+                    <span class="btn-arrow"><svg viewBox="0 0 25 24" fill="none"><path d="M15.931 13.325H4.053V10.675H15.931L10.642 5.386L12.533 3.52L21.014 12L12.533 20.48L10.642 18.614L15.931 13.325Z" fill="#CBDB2A"/></svg></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- === 9. PROJECT MAP ===
+         Sourced from live site. Map image on LEFT (flat left edge), text on RIGHT. -->
+    <section class="map-section">
+        <div class="container">
+            <div class="map-section__inner">
+                <div class="map-section__image">
+                    <img src="https://www.ozcast.com.au/wp-content/uploads/2025/05/about-img.webp" alt="Ozcast project map showing completed and in-progress projects across Australia">
+                </div>
+                <div class="map-section__text-col">
+                    <span class="map-section__pill">Project Map</span>
+                    <h3 class="map-section__title">Projects across Australia</h3>
+                    <p class="map-section__text">Explore our project map to see the breadth of Ozcast's contributions to Australian infrastructure projects. Each pin represents a specific location where we've provided our high-quality precast concrete for road and rail projects.</p>
+                    <div class="map-section__keys">
+                        <div class="map-section__key">
+                            <img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/icon-project-complete.svg" alt="">
+                            <span>Projects completed</span>
+                        </div>
+                        <div class="map-section__key">
+                            <img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/icon-project-progress.svg" alt="">
+                            <span>Projects in progress</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === 10. PEOPLE & CULTURE ===
+         Swiper.js Coverflow Effect (App Screenshots style) — no captions.
+         CDN loaded, vanilla JS, WordPress-compatible. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <section class="people">
+        <div class="people__top">
+            <span class="people__pill" data-reveal>About us</span>
+            <h2 class="people__title" data-reveal data-delay="1">Our People and Culture</h2>
+            <p class="people__text" data-reveal data-delay="2">Behind the scenes, our vibrant team at Ozcast are there to ensure we deliver the best experience for our customers.</p>
+        </div>
+        <div class="swiper people-swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team culture">
+                </div>
+                <div class="swiper-slide">
+                    <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team culture">
+                </div>
+                <div class="swiper-slide">
+                    <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast team culture">
+                </div>
+                <div class="swiper-slide">
+                    <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team culture">
+                </div>
+                <div class="swiper-slide">
+                    <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast team culture">
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        const peopleSwiper = new Swiper('.people-swiper', {
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 'auto',
+            loop: true,
+            loopAdditionalSlides: 5,
+            initialSlide: 2,
+            coverflowEffect: {
+                rotate: 0,
+                stretch: 120,
+                depth: 200,
+                modifier: 1,
+                slideShadows: true,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            on: {
+                click: function (swiper, event) {
+                    const clicked = swiper.clickedSlide;
+                    if (!clicked) return;
+                    if (clicked.classList.contains('swiper-slide-active')) return;
+                    // Determine direction based on position relative to active slide
+                    const clickedRect = clicked.getBoundingClientRect();
+                    const containerRect = swiper.el.getBoundingClientRect();
+                    const containerCenter = containerRect.left + containerRect.width / 2;
+                    const slideCenter = clickedRect.left + clickedRect.width / 2;
+                    if (slideCenter > containerCenter) {
+                        swiper.slideNext();
+                    } else {
+                        swiper.slidePrev();
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- === 11. CERTIFICATIONS ===
+         Using real ISO logos from the live site. -->
+    <section class="certs">
+        <div class="container">
+            <span class="certs__pill" data-reveal>Accreditation</span>
+            <h2 class="certs__title" data-reveal data-delay="1">Excellence Cemented in Standards</h2>
+            <p class="certs__text" data-reveal data-delay="2">Ozcast maintains ISO accreditation across quality, efficiency, and safety — the standard Tier 1 contractors require from their supply chain.</p>
+            <div class="certs__logos">
+                <div class="certs__logo"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/Ozcast-certificates3.jpg" alt="IAF logo"></div>
+                <div class="certs__logo"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/Ozcast-certificates2.jpg" alt="Bcert"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === 12. SOCIAL FEED ===
+         Using the same Elfsight LinkedIn Feed widget as the live site. -->
+    <section class="social">
+        <div class="container">
+            <div class="social__top">
+                <span class="social__pill">Updates</span>
+                <h2 class="social__title">Social feed</h2>
+                <p style="color: #353535; margin-top: 12px; max-width: 540px; margin-left: auto; margin-right: auto;">Dive into the latest Ozcast developments in precast concrete, where innovation meets structure.</p>
+            </div>
+            <div class="social__grid-wrapper">
+                <script src="https://static.elfsight.com/platform/platform.js" async></script>
+                <div class="elfsight-app-b63143b8-c39a-472d-8756-b141b596a00e" data-elfsight-app-lazy></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === 13. FOOTER (matching live site structure) ===
+         Shader background (shaders.com) renders behind content via absolute-positioned canvas. -->
+    <footer class="footer">
+        <div class="footer__shader-bg" aria-hidden="true">
+            <canvas id="shaderCanvas"></canvas>
+        </div>
+        <div class="footer__upper">
+            <div class="footer__upper-row">
+                <div class="footer__col">
+                    <h5>General enquiries</h5>
+                    <ul>
+                        <li><a href="tel:(02) 8034 2296">(02) 8034 2296</a></li>
+                        <li><a href="mailto:admin@ozcast.com.au">admin@ozcast.com.au</a></li>
+                    </ul>
+                    <a href="/contact/" class="footer__cta">
+                        Contact us
+                        <svg viewBox="0 0 24 25" fill="none"><path d="M12.6 12.5l-3.9-3.9a.97.97 0 01-.28-.7c0-.28.09-.52.28-.7a.97.97 0 01.7-.28c.28 0 .52.09.7.28l4.6 4.6c.1.1.17.22.21.33.04.12.06.24.06.37s-.02.26-.06.37c-.04.12-.11.23-.21.33l-4.6 4.6a.97.97 0 01-.7.28.97.97 0 01-.7-.28.97.97 0 01-.28-.7c0-.28.09-.52.28-.7l3.9-3.9z" fill="#5A5A5A"/></svg>
+                    </a>
+                </div>
+                <div class="footer__col">
+                    <h5>Location</h5>
+                    <p>269 Edgar Street, Condell Park NSW 2200</p>
+                    <a href="https://maps.app.goo.gl/Xn9hUVgpnFeYgHHT8" target="_blank" class="footer__cta">
+                        Open Maps
+                        <svg viewBox="0 0 24 25" fill="none"><path d="M12.6 12.5l-3.9-3.9a.97.97 0 01-.28-.7c0-.28.09-.52.28-.7a.97.97 0 01.7-.28c.28 0 .52.09.7.28l4.6 4.6c.1.1.17.22.21.33.04.12.06.24.06.37s-.02.26-.06.37c-.04.12-.11.23-.21.33l-4.6 4.6a.97.97 0 01-.7.28.97.97 0 01-.7-.28.97.97 0 01-.28-.7c0-.28.09-.52.28-.7l3.9-3.9z" fill="#5A5A5A"/></svg>
+                    </a>
+                </div>
+                <div class="footer__col">
+                    <h5>Services</h5>
+                    <p>Explore our products, finishes and process</p>
+                    <a href="/services/" class="footer__cta">
+                        Learn more
+                        <svg viewBox="0 0 24 25" fill="none"><path d="M12.6 12.5l-3.9-3.9a.97.97 0 01-.28-.7c0-.28.09-.52.28-.7a.97.97 0 01.7-.28c.28 0 .52.09.7.28l4.6 4.6c.1.1.17.22.21.33.04.12.06.24.06.37s-.02.26-.06.37c-.04.12-.11.23-.21.33l-4.6 4.6a.97.97 0 01-.7.28.97.97 0 01-.7-.28.97.97 0 01-.28-.7c0-.28.09-.52.28-.7l3.9-3.9z" fill="#5A5A5A"/></svg>
+                    </a>
+                </div>
+                <div class="footer__col">
+                    <h5>Follow us</h5>
+                    <div class="footer__social">
+                        <a href="https://www.facebook.com/ozcastprecast" target="_blank" aria-label="Facebook">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                        </a>
+                        <a href="https://www.linkedin.com/company/ozcast/" target="_blank" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/@Ozcast-Precast-AU" target="_blank" aria-label="YouTube">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33z"/><polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="#fff"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer__lower">
+            <div class="footer__lower-logo">
+                <a href="/"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/ozcast-logo-footer.svg" alt="Ozcast" width="113" height="32"></a>
+            </div>
+            <div class="footer__lower-links">
+                <a href="/privacy-policy/">Privacy Policy</a>
+                <a href="/privacy-policy/">Terms and Conditions</a>
+            </div>
+            <div class="footer__copyright">All rights reserved &copy; 2026 Ozcast Precast Pty Ltd</div>
+        </div>
+    </footer>
+
+    <!-- === JAVASCRIPT === -->
+    <script>
+        // Nav scroll: transparent → solid (kick in before headline clashes with nav)
+        const nav = document.getElementById('mainNav');
+        const hero = document.querySelector('.hero');
+        const heroContent = document.querySelector('.hero__content');
+        function handleNavScroll() {
+            // Transition to solid before the H1 headline reaches the nav area
+            const headlineTop = heroContent.getBoundingClientRect().top;
+            if (window.scrollY > 80) {
+                nav.classList.remove('nav--transparent');
+                nav.classList.add('nav--solid');
+            } else {
+                nav.classList.remove('nav--solid');
+                nav.classList.add('nav--transparent');
+            }
+        }
+        window.addEventListener('scroll', handleNavScroll, { passive: true });
+        handleNavScroll();
+
+        // Stats counter animation (IntersectionObserver)
+        const counters = document.querySelectorAll('.counter');
+        let statsAnimated = false;
+        function animateCounters() {
+            if (statsAnimated) return;
+            statsAnimated = true;
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 1500;
+                const startTime = performance.now();
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    counter.textContent = Math.floor(eased * target).toLocaleString();
+                    if (progress < 1) requestAnimationFrame(update);
+                    else counter.textContent = target.toLocaleString();
+                }
+                requestAnimationFrame(update);
+            });
+        }
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { animateCounters(); statsObserver.unobserve(entry.target); } });
+        }, { threshold: 0.3 });
+        statsObserver.observe(document.getElementById('statsSection'));
+
+        // Mission image parallax (subtle vertical offset on scroll)
+        const missionImg = document.querySelector('.mission__parallax-img');
+        const missionSection = document.querySelector('.mission');
+        if (missionImg && missionSection) {
+            function handleMissionParallax() {
+                const rect = missionSection.getBoundingClientRect();
+                const viewH = window.innerHeight;
+                if (rect.top < viewH && rect.bottom > 0) {
+                    const progress = (viewH - rect.top) / (viewH + rect.height);
+                    const offset = (progress - 0.5) * -40; // max 20px shift
+                    missionImg.style.transform = 'translateY(' + offset + 'px) scale(1.05)';
+                }
+            }
+            window.addEventListener('scroll', handleMissionParallax, { passive: true });
+            handleMissionParallax();
+        }
+
+        // CTA banner parallax (subtle vertical offset on scroll)
+        const ctaImg = document.querySelector('.cta-banner__parallax-img');
+        const ctaSection = document.getElementById('ctaBanner');
+        if (ctaImg && ctaSection) {
+            function handleCtaParallax() {
+                const rect = ctaSection.getBoundingClientRect();
+                const viewH = window.innerHeight;
+                if (rect.top < viewH && rect.bottom > 0) {
+                    const progress = (viewH - rect.top) / (viewH + rect.height);
+                    const offset = (progress - 0.5) * -160; // 80px shift each direction for more noticeable parallax
+                    ctaImg.style.transform = 'translateY(' + offset + 'px)';
+                }
+            }
+            window.addEventListener('scroll', handleCtaParallax, { passive: true });
+            handleCtaParallax();
+        }
+
+        // Scroll reveal (IntersectionObserver) — adds .revealed class on enter
+        const revealEls = document.querySelectorAll('[data-reveal]');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(el => revealObserver.observe(el));
+    </script>
+
+    <!-- Footer shader (bundled from shaders.com export via Vite) -->
+    <script type="module" src="footer-shader.js"></script>
+
+</body>
+</html>
