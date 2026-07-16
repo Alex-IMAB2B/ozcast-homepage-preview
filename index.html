@@ -46,12 +46,22 @@
            - Logo marquee: CSS-only infinite scroll
            ========================================================================== */
 
+        :root {
+            --oz-charcoal: #202020;
+            --oz-near-black: #282829;
+            --oz-text: #353535;
+            --oz-lime: #CCDB2A;
+            --oz-white: #FFFFFF;
+            --oz-light-grey: #CACACA;
+        }
+
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; overflow-x: hidden; }
         body { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 1.6; color: #353535; background: #FFFFFF; overflow-x: hidden; max-width: 100vw; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; font-weight: 500; color: #202020; line-height: 1.15; }
         img { max-width: 100%; height: auto; display: block; }
         a { text-decoration: none; color: inherit; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
         .container { max-width: 1940px; margin: 0 auto; padding: 0 70px; }
         .section-pad { padding: 100px 0; }
 
@@ -148,10 +158,13 @@
 
         /* --- 6. PROJECTS INTRO --- */
         .projects-intro { padding: 80px 0 40px; background: #FFFFFF; }
+        .projects-intro__inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+        .projects-intro__heading { min-width: 0; }
         .projects-intro__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
-        .projects-intro__title { font-size: clamp(36px, 4vw, 56px); max-width: 700px; margin-bottom: 16px; }
-        .projects-intro__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: #CCDB2A; color: #282829; font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; transition: transform 0.2s ease; margin-top: 12px; }
+        .projects-intro__title { font-size: clamp(36px, 4vw, 56px); max-width: 700px; margin-bottom: 0; }
+        .projects-intro__cta { display: inline-flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: #CCDB2A; color: #282829; font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; transition: transform 0.2s ease; }
         .projects-intro__cta:hover { transform: translateY(-2px); }
+        .projects-intro__cta:focus-visible { outline: 3px solid #202020; outline-offset: 4px; }
         .projects-intro__cta .btn-arrow { width: 33px; height: 33px; background: #282829; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .projects-intro__cta .btn-arrow svg { width: 16px; height: 16px; }
 
@@ -188,8 +201,8 @@
 
 
         /* --- 8. CTA BANNER --- */
-        .cta-banner { position: relative; padding: 280px 0; overflow: hidden; }
-        .cta-banner__bg { position: absolute; inset: -180px 0; }
+        .cta-banner { position: relative; padding: 180px 0; overflow: hidden; }
+        .cta-banner__bg { position: absolute; inset: -100px 0; }
         .cta-banner__bg img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
         .cta-banner__bg::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
         .cta-banner__content { position: relative; z-index: 2; text-align: center; max-width: 700px; margin: 0 auto; }
@@ -199,23 +212,32 @@
         .cta-banner__btn .btn-arrow { width: 33px; height: 33px; background: #282829; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .cta-banner__btn .btn-arrow svg { width: 16px; height: 16px; }
 
-        /* --- 9. PROJECT MAP --- */
-        .map-section { padding: 80px 0; background: #FFFFFF; }
-        .map-section__inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; align-items: center; }
-        .map-section__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
-        .map-section__title { font-size: 28px; margin-bottom: 16px; }
-        .map-section__text { color: #353535; line-height: 1.7; margin-bottom: 20px; max-width: 540px; }
-        .map-section__keys { display: flex; gap: 20px; margin-top: 16px; }
-        .map-section__key { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #353535; }
-        .map-section__key img { width: 28px; height: 28px; }
-        .map-section__image { margin-left: -70px; overflow: hidden; max-height: 800px; display: flex; align-items: flex-start; }
-        .map-section__image img { width: auto; height: auto; display: block; max-height: 800px; object-fit: contain; object-position: left center; }
+        /* --- 9. PROJECT MAP (Dot-grid Australia) --- */
+        .map-section { padding: 80px 0; background: var(--oz-charcoal); }
+        .map-section__inner { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr); gap: 64px; align-items: center; }
+        .map-section__visual { position: relative; min-height: clamp(440px, 38vw, 620px); }
+        .map-section__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+        .map-section__pill { display: inline-block; padding: 8px 12px; border-radius: 60px; background: transparent; color: var(--oz-light-grey); font-size: 16px; font-weight: 400; margin-bottom: 16px; border: 1px solid var(--oz-lime); font-family: 'Poppins', sans-serif; }
+        .map-section__title { font-size: clamp(36px, 4vw, 56px); margin-bottom: 16px; color: var(--oz-white); }
+        .map-section__text { color: var(--oz-light-grey); font-size: 16px; line-height: 1.7; margin-bottom: 24px; max-width: 540px; }
+        .map-section__keys { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 16px; }
+        .map-section__key { display: flex; align-items: center; gap: 8px; color: var(--oz-light-grey); font-size: 16px; }
+        .map-section__key-marker { position: relative; flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%; }
+        .map-section__key-marker--current { border: 1px solid var(--oz-lime); }
+        .map-section__key-marker--current::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--oz-lime); }
+        .map-section__key-marker--complete { display: grid; place-items: center; border: 1px solid var(--oz-light-grey); }
+        .map-section__key-marker--complete svg { width: 14px; height: 14px; stroke: var(--oz-light-grey); }
         .map-section__text-col { padding-left: 0; }
+
+        /* reduced motion: no map animations */
+        @media (prefers-reduced-motion: reduce) {
+            /* animations removed with map refactor */
+        }
 
         /* --- 10. PEOPLE & CULTURE (Stacked Scroll-X — 2 rows, opposite directions) --- */
         .people { background: #FFFFFF; position: relative; }
         .people__scroll-region { position: relative; width: 100vw; max-width: 100%; }
-        .people__sticky { top: 0; left: 0; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 80px 0; }
+        .people__sticky { top: 0; left: 0; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 48px 0 64px; }
         .people__top { text-align: left; padding: 0 70px; margin-bottom: 24px; }
         .people__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
         .people__title { color: #202020; font-size: 39px; font-weight: 500; margin-bottom: 16px; }
@@ -284,9 +306,8 @@
             .hero__content { margin-left: 40px; }
             .stats__grid { grid-template-columns: repeat(2, 1fr); }
             .mission__inner { grid-template-columns: 1fr; gap: 40px; }
-            .map-section__inner { grid-template-columns: 1fr; }
-            .map-section__image { order: -1; margin-left: -40px; }
-            .map-section__text-col { padding-left: 0; padding-top: 32px; }
+            .map-section__inner { grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr); gap: 32px; }
+            .map-section__visual { min-height: 400px; }
             .people__top { padding: 0 40px; }
             .people-swiper .swiper-slide { width: 500px; }
             .people-swiper .swiper-slide img { height: 360px; }
@@ -306,8 +327,15 @@
             .projects__grid { grid-template-columns: 1fr; }
             .project-card--featured .project-card__image { aspect-ratio: 16 / 7; }
             .project-card--featured .project-card__name { font-size: clamp(18px, 1.6vw, 22px); max-width: 100%; }
+            .projects-intro__inner { flex-direction: column; align-items: flex-start; gap: 24px; }
+            .projects-intro__title { max-width: 100%; }
             .projects-intro__cta .btn-arrow { display: inline-flex; }
-            .cta-banner { padding: 140px 0; }
+            .cta-banner { padding: 100px 0; }
+            .map-section { padding: 40px 0; }
+            .map-section__inner { grid-template-columns: 1fr; gap: 32px; }
+            .map-section__text-col { order: 1; }
+            .map-section__visual { order: 2; min-height: 0; aspect-ratio: 4 / 3; }
+            .map-section__keys { gap: 16px; }
             .footer__upper { padding: 40px 24px 20px; }
             .footer__upper-row { grid-template-columns: 1fr; gap: 32px; }
             .footer__lower { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
@@ -387,13 +415,13 @@
         </div>
     </nav>
 
-    <!-- === 2. HERO — FULL-SCREEN VIDEO BANNER ===
-         Testing OZC0027-Berry to Bomaderry-d02.webm as hero background.
+    <!-- === 2. HERO: FULL-SCREEN VIDEO BANNER ===
+         Using homepage-banner-video.webm as the hero background.
          The gradient overlay ensures text legibility regardless of video content. -->
     <section class="hero">
         <div class="hero__video-bg">
             <video autoplay muted loop playsinline>
-                <source src="homepage-animation.mp4" type="video/mp4">
+                <source src="homepage-banner-video.webm" type="video/webm">
             </video>
         </div>
         <div class="hero__content">
@@ -494,8 +522,16 @@
     <!-- === 6. PROJECTS INTRO === -->
     <section class="projects-intro">
         <div class="container">
-            <span class="projects-intro__pill" data-reveal>Projects</span>
-            <h2 class="projects-intro__title" data-reveal data-delay="1">Parapet projects across Australia's major infrastructure</h2>
+            <div class="projects-intro__inner">
+                <div class="projects-intro__heading">
+                    <span class="projects-intro__pill" data-reveal>Projects</span>
+                    <h2 class="projects-intro__title" data-reveal data-delay="1">Parapet projects across Australia's major infrastructure</h2>
+                </div>
+                <a href="/projects/" class="projects-intro__cta" data-reveal data-delay="2">
+                    View all projects
+                    <span class="btn-arrow"><svg viewBox="0 0 25 24" fill="none"><path d="M15.931 13.325H4.053V10.675H15.931L10.642 5.386L12.533 3.52L21.014 12L12.533 20.48L10.642 18.614L15.931 13.325Z" fill="#CBDB2A"/></svg></span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -585,13 +621,6 @@
                 </a>
 
             </div>
-            <!-- View all projects button at bottom of grid -->
-            <div style="text-align: center; padding-top: 48px;">
-                <a href="/projects/" class="projects-intro__cta">
-                    View all projects
-                    <span class="btn-arrow"><svg viewBox="0 0 25 24" fill="none"><path d="M15.931 13.325H4.053V10.675H15.931L10.642 5.386L12.533 3.52L21.014 12L12.533 20.48L10.642 18.614L15.931 13.325Z" fill="#CBDB2A"/></svg></span>
-                </a>
-            </div>
         </div>
     </section>
 
@@ -614,25 +643,27 @@
     </section>
 
     <!-- === 9. PROJECT MAP ===
-         Sourced from live site. Map image on LEFT (flat left edge), text on RIGHT. -->
-    <section class="map-section">
+         Canvas-based dot-grid filling Australia silhouette. Lime dots = current jobs. -->
+    <section class="map-section" aria-labelledby="project-map-title">
         <div class="container">
             <div class="map-section__inner">
-                <div class="map-section__image">
-                    <img src="https://www.ozcast.com.au/wp-content/uploads/2025/05/about-img.webp" alt="Ozcast project map showing completed and in-progress projects across Australia">
+                <div class="map-section__visual" data-reveal>
+                    <canvas class="map-section__canvas" id="ausDotGrid" aria-label="Dot-grid map of Australia showing current project locations highlighted in lime green"></canvas>
                 </div>
-                <div class="map-section__text-col">
-                    <span class="map-section__pill">Project Map</span>
-                    <h3 class="map-section__title">Projects across Australia</h3>
-                    <p class="map-section__text">Explore our project map to see the breadth of Ozcast's contributions to Australian infrastructure projects. Each pin represents a specific location where we've provided our high-quality precast concrete for road and rail projects.</p>
-                    <div class="map-section__keys">
-                        <div class="map-section__key">
-                            <img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/icon-project-complete.svg" alt="">
-                            <span>Projects completed</span>
+                <div class="map-section__text-col" data-reveal data-delay="1">
+                    <span class="map-section__pill">Project map</span>
+                    <h2 class="map-section__title" id="project-map-title">Projects across Australia</h2>
+                    <p class="map-section__text">Explore where Ozcast precast elements are supporting road and rail infrastructure. Completed projects span the country, with current work concentrated across key New South Wales transport corridors.</p>
+                    <div class="map-section__keys" role="list" aria-label="Project map legend">
+                        <div class="map-section__key" role="listitem">
+                            <span class="map-section__key-marker map-section__key-marker--current" aria-hidden="true"></span>
+                            <span>Current work</span>
                         </div>
-                        <div class="map-section__key">
-                            <img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/icon-project-progress.svg" alt="">
-                            <span>Projects in progress</span>
+                        <div class="map-section__key" role="listitem">
+                            <span class="map-section__key-marker map-section__key-marker--complete" aria-hidden="true">
+                                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                            </span>
+                            <span>Completed projects</span>
                         </div>
                     </div>
                 </div>
@@ -926,6 +957,10 @@
 
     <!-- Footer shader (bundled from shaders.com export via Vite) -->
     <script type="module" src="footer-shader.js"></script>
+
+ <!-- Australia dot-grid map (GSAP-powered interactive) -->
+ <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+ <script src="aus-dot-grid.js?v=2"></script>
 
 </body>
 </html>
