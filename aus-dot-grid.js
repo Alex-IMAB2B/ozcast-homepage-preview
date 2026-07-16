@@ -19,6 +19,9 @@
     const SRC_MIN_Y = 569.0;
     const SRC_W = 100.0;
     const SRC_H = 110.0;
+    
+    // Horizontal stretch factor to compensate for visual narrowing from rotation
+    const H_STRETCH = 1.15;
 
     // We'll render into a normalised 1000x750 space
     const PATH_W = 1000;
@@ -30,22 +33,68 @@
         return [(sx - SRC_MIN_X) / SRC_W * PATH_W, (sy - SRC_MIN_Y) / SRC_H * PATH_H];
     }
 
-    // Job locations in source SVG coords (approximate city positions within the AU shape)
-    // Based on actual bounds: x 669-769, y 569-679
+    // Current job locations in source SVG coords
+    // 75% along east edge, 25% spread across the map
     const jobsSrc = [
-        [755, 630],   // Sydney region
-        [758, 640],   // South coast NSW
-        [740, 650],   // Melbourne
-        [710, 635],   // Adelaide
-        [678, 615],   // Perth
-        [740, 620],   // Inland NSW (Orange/Bathurst)
-        [720, 600],   // Central QLD
-        [745, 595],   // North QLD / Mackay
-        [700, 590],   // NT
-        [730, 670],   // Tasmania
-        [750, 610],   // Brisbane
-        [685, 640],   // Southern WA
-        [700, 620],   // SA outback
+        // East edge (75% = 15 dots)
+        [758, 630],   // Sydney
+        [756, 610],   // Brisbane
+        [752, 595],   // North QLD
+        [748, 652],   // Melbourne
+        [758, 622],   // Hunter Valley
+        [760, 618],   // Central Coast
+        [756, 638],   // Wollongong
+        [760, 625],   // Newcastle
+        [756, 645],   // South coast NSW
+        [758, 614],   // Gold Coast
+        [756, 628],   // Canberra
+        [752, 618],   // Grafton
+        [748, 593],   // Mackay
+        [750, 642],   // Batemans Bay
+        [748, 648],   // Geelong
+        // Spread across (25% = 5 dots)
+        [712, 638],   // Adelaide
+        [680, 618],   // Perth
+        [700, 595],   // NT
+        [725, 610],   // Inland QLD
+        [730, 645],   // Western VIC
+    ];
+
+    // Completed project locations (shown as solid white dots)
+    // 75% along east edge, 25% spread across the map
+    const completedSrc = [
+        // East edge (75% = 22 dots)
+        [760, 643],   // South coast NSW
+        [754, 605],   // Bundaberg
+        [750, 600],   // Rockhampton
+        [756, 620],   // Coffs Harbour
+        [758, 635],   // Southern Highlands
+        [746, 600],   // Gladstone
+        [752, 612],   // Sunshine Coast
+        [748, 655],   // Western Port
+        [754, 625],   // Maitland
+        [750, 610],   // Toowoomba
+        [756, 648],   // Nowra
+        [746, 640],   // Shepparton
+        [752, 632],   // Blue Mountains
+        [748, 605],   // Hervey Bay
+        [754, 615],   // Lismore
+        [750, 645],   // Bega
+        [746, 595],   // Townsville
+        [752, 640],   // Goulburn
+        [748, 625],   // Tamworth
+        [754, 650],   // Warragul
+        [746, 615],   // Armidale
+        [750, 635],   // Queanbeyan
+        // Spread across (25% = 8 dots)
+        [732, 672],   // Tasmania
+        [687, 642],   // Southern WA
+        [698, 622],   // SA outback
+        [693, 608],   // Pilbara
+        [716, 635],   // Broken Hill
+        [706, 598],   // Tennant Creek
+        [722, 645],   // Riverina
+        [700, 635],   // Port Augusta
     ];
 
     const currentJobs = jobsSrc.map(j => {
@@ -53,14 +102,24 @@
         return { x, y };
     });
 
-    const DOT_SIZE = 4.5;
-    const GAP = 11;
+    const completedJobs = completedSrc.map(j => {
+        const [x, y] = srcToNorm(j[0], j[1]);
+        return { x, y };
+    });
+
+    const DOT_SIZE_BASE = 4.5;
+    const GAP_BASE = 11;
     const BASE_COLOR = '#FFFFFF';
     const ACTIVE_COLOR = '#CCDB2A';
     const HOVER_RADIUS = 120;
     const PUSH_RADIUS = 140;
     const PUSH_STRENGTH = 5;
-    const HIGHLIGHT_RADIUS = 35;
+    const HIGHLIGHT_RADIUS = 12;
+
+    // Responsive: scale dot size and gap relative to canvas width
+    // Desktop ~800px canvas = base values. Mobile ~375px = smaller dots, tighter gap
+    let DOT_SIZE = DOT_SIZE_BASE;
+    let GAP = GAP_BASE;
 
     let dots = [];
     let pointer = { x: -9999, y: -9999 };
@@ -84,7 +143,7 @@
 
     // The world-map SVG uses Robinson projection which tilts Australia clockwise.
     // We counter-rotate the coordinate lookup to straighten it.
-    const ROTATION_DEG = -6;
+    const ROTATION_DEG = -14;
     const ROTATION_RAD = ROTATION_DEG * Math.PI / 180;
     const COS_R = Math.cos(ROTATION_RAD);
     const SIN_R = Math.sin(ROTATION_RAD);
@@ -96,6 +155,12 @@
         const rect = canvas.parentElement.getBoundingClientRect();
         canvasW = rect.width;
         canvasH = rect.height;
+        
+        // Scale dots for mobile to maintain similar density as desktop
+        const scaleFactor = Math.min(1, canvasW / 700);
+        DOT_SIZE = DOT_SIZE_BASE * scaleFactor;
+        GAP = GAP_BASE * scaleFactor;
+        
         canvas.width = canvasW * dpr;
         canvas.height = canvasH * dpr;
         canvas.style.width = canvasW + 'px';
@@ -111,10 +176,10 @@
         const padY = canvasH * 0.03;
         const drawW = canvasW - padX * 2;
         const drawH = canvasH - padY * 2;
-        const scaleX = drawW / SRC_W;
+        const scaleX = drawW / (SRC_W * H_STRETCH);
         const scaleY = drawH / SRC_H;
         scale = Math.min(scaleX, scaleY);
-        offsetX = padX + (drawW - SRC_W * scale) / 2;
+        offsetX = padX + (drawW - SRC_W * H_STRETCH * scale) / 2;
         offsetY = padY + (drawH - SRC_H * scale) / 2;
 
         // Generate dot grid and test which dots fall inside Australia
@@ -130,7 +195,7 @@
 
                 // Convert canvas pixel to source SVG coordinates for hit testing
                 // Apply inverse rotation to straighten Australia from Robinson projection tilt
-                const rawSrcX = (cx - offsetX) / scale + SRC_MIN_X;
+                const rawSrcX = (cx - offsetX) / scale / H_STRETCH + SRC_MIN_X;
                 const rawSrcY = (cy - offsetY) / scale + SRC_MIN_Y;
                 // Rotate point around centre of AU bounding box
                 const relX = rawSrcX - ROT_CX;
@@ -150,13 +215,23 @@
                     const normX = (srcX - SRC_MIN_X) / SRC_W * PATH_W;
                     const normY = (srcY - SRC_MIN_Y) / SRC_H * PATH_H;
 
-                    let isHighlighted = false;
+                    let dotType = 'base'; // base | current | completed
                     for (const job of currentJobs) {
                         const dx = normX - job.x;
                         const dy = normY - job.y;
                         if (dx * dx + dy * dy < HIGHLIGHT_RADIUS * HIGHLIGHT_RADIUS) {
-                            isHighlighted = true;
+                            dotType = 'current';
                             break;
+                        }
+                    }
+                    if (dotType === 'base') {
+                        for (const job of completedJobs) {
+                            const dx = normX - job.x;
+                            const dy = normY - job.y;
+                            if (dx * dx + dy * dy < HIGHLIGHT_RADIUS * HIGHLIGHT_RADIUS) {
+                                dotType = 'completed';
+                                break;
+                            }
                         }
                     }
 
@@ -164,7 +239,7 @@
                         cx, cy,
                         xOffset: 0,
                         yOffset: 0,
-                        highlighted: isHighlighted
+                        dotType: dotType
                     });
                 }
             }
@@ -175,9 +250,12 @@
         ctx.clearRect(0, 0, canvasW, canvasH);
 
         const hoverSq = HOVER_RADIUS * HOVER_RADIUS;
-        const pushSq = PUSH_RADIUS * PUSH_RADIUS;
         const px = pointer.x;
         const py = pointer.y;
+        
+        // Pulse animation for green dots (breathing scale)
+        const time = performance.now() * 0.001;
+        const pulse = 1 + 0.2 * Math.sin(time * 2.2);
 
         for (const dot of dots) {
             const ox = dot.cx + dot.xOffset;
@@ -187,34 +265,51 @@
             const dy = dot.cy - py;
             const dsq = dx * dx + dy * dy;
 
-            let r, g, b, alpha;
+            const radius = DOT_SIZE / 2;
 
-            if (dot.highlighted) {
-                r = activeRgb.r;
-                g = activeRgb.g;
-                b = activeRgb.b;
-                alpha = 0.95;
+            if (dot.dotType === 'current') {
+                // Filled lime dot at 2x size with pulse
+                let alpha = 0.95;
+                if (dsq <= hoverSq) {
+                    const t = 1 - Math.sqrt(dsq) / HOVER_RADIUS;
+                    alpha = Math.min(1, alpha + t * 0.05);
+                }
+                const pulseRadius = radius * 2 * pulse;
+                ctx.beginPath();
+                ctx.arc(ox, oy, pulseRadius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${activeRgb.r},${activeRgb.g},${activeRgb.b},${alpha})`;
+                ctx.fill();
+            } else if (dot.dotType === 'completed') {
+                // Solid white dot (brighter than base)
+                let alpha = 0.85;
+                if (dsq <= hoverSq) {
+                    const t = 1 - Math.sqrt(dsq) / HOVER_RADIUS;
+                    alpha = Math.min(1, alpha + t * 0.15);
+                }
+                ctx.beginPath();
+                ctx.arc(ox, oy, radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+                ctx.fill();
             } else {
-                r = baseRgb.r;
-                g = baseRgb.g;
-                b = baseRgb.b;
-                alpha = 0.38;
-            }
+                // Base dot: subtle white
+                let r = baseRgb.r, g = baseRgb.g, b = baseRgb.b;
+                let alpha = 0.3;
 
-            // Proximity hover: blend toward lime and increase opacity
-            if (dsq <= hoverSq) {
-                const dist = Math.sqrt(dsq);
-                const t = 1 - dist / HOVER_RADIUS;
-                r = Math.round(r + (activeRgb.r - r) * t);
-                g = Math.round(g + (activeRgb.g - g) * t);
-                b = Math.round(b + (activeRgb.b - b) * t);
-                alpha = Math.min(1, alpha + t * 0.6);
-            }
+                // Proximity hover: blend toward lime
+                if (dsq <= hoverSq) {
+                    const dist = Math.sqrt(dsq);
+                    const t = 1 - dist / HOVER_RADIUS;
+                    r = Math.round(r + (activeRgb.r - r) * t);
+                    g = Math.round(g + (activeRgb.g - g) * t);
+                    b = Math.round(b + (activeRgb.b - b) * t);
+                    alpha = Math.min(1, alpha + t * 0.6);
+                }
 
-            ctx.beginPath();
-            ctx.arc(ox, oy, DOT_SIZE / 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
-            ctx.fill();
+                ctx.beginPath();
+                ctx.arc(ox, oy, radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+                ctx.fill();
+            }
         }
 
         requestAnimationFrame(draw);

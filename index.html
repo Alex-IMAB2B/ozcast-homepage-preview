@@ -134,7 +134,7 @@
         .mission__image img { width: 100%; height: 100%; object-fit: cover; display: block; transform: translateY(0); transition: transform 0.1s linear; }
 
         /* --- 4. PARTNER LOGOS MARQUEE --- */
-        .logos { padding: 60px 0 80px; background: #FFFFFF; border-top: 1px solid rgba(53,53,53,0.08); overflow: hidden; }
+        .logos { padding: 60px 0 80px; background: #FFFFFF; overflow: hidden; }
         .logos__heading { text-align: center; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; color: #353535; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 32px; }
         .logos__track { display: flex; animation: marqueeScroll 35s linear infinite; width: max-content; }
         .logos__track:hover { animation-play-state: paused; }
@@ -183,9 +183,10 @@
 
         /* Always-visible info bar below image */
         .project-card__info { padding: 20px 4px 28px; }
-        .project-card__client { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #353535; opacity: 0.6; margin-bottom: 6px; }
+        .project-card__client { font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: #353535; opacity: 0.6; margin-bottom: 6px; }
         .project-card__name { font-family: 'Inter', sans-serif; font-size: clamp(18px, 1.6vw, 22px); font-weight: 500; color: #202020; margin-bottom: 14px; line-height: 1.25; }
         .project-card--featured .project-card__name { font-size: clamp(26px, 2.5vw, 36px); max-width: 50%; }
+        .project-card--featured .project-card__client { font-size: 14px; }
 
         @media (max-width: 768px) {
             .project-card--featured .project-card__name { max-width: 100%; }
@@ -213,62 +214,65 @@
         .cta-banner__btn .btn-arrow svg { width: 16px; height: 16px; }
 
         /* --- 9. PROJECT MAP (Dot-grid Australia) --- */
-        .map-section { padding: 80px 0; background: var(--oz-charcoal); }
-        .map-section__inner { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr); gap: 64px; align-items: center; }
-        .map-section__visual { position: relative; min-height: clamp(440px, 38vw, 620px); }
+        .map-section { padding: 60px 0; background: var(--oz-charcoal); overflow: hidden; max-height: 700px; }
+        .map-section__inner { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr); gap: 44px; align-items: center; }
+        .map-section__visual { position: relative; height: 780px; margin: -60px 0; }
         .map-section__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-        .map-section__pill { display: inline-block; padding: 8px 12px; border-radius: 60px; background: transparent; color: var(--oz-light-grey); font-size: 16px; font-weight: 400; margin-bottom: 16px; border: 1px solid var(--oz-lime); font-family: 'Poppins', sans-serif; }
-        .map-section__title { font-size: clamp(36px, 4vw, 56px); margin-bottom: 16px; color: var(--oz-white); }
+        .map-section__vignette { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(to bottom, var(--oz-charcoal) 0%, transparent 15%, transparent 85%, var(--oz-charcoal) 100%); }
+        .map-section__glow { position: absolute; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 50% 60% at 65% 50%, rgba(204,219,42,0.04) 0%, transparent 70%); }
+        .map-section__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: var(--oz-light-grey); font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid var(--oz-lime); font-family: 'Poppins', sans-serif; }
+        .map-section__title { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 20px; color: var(--oz-white); }
         .map-section__text { color: var(--oz-light-grey); font-size: 16px; line-height: 1.7; margin-bottom: 24px; max-width: 540px; }
         .map-section__keys { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 16px; }
         .map-section__key { display: flex; align-items: center; gap: 8px; color: var(--oz-light-grey); font-size: 16px; }
-        .map-section__key-marker { position: relative; flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%; }
-        .map-section__key-marker--current { border: 1px solid var(--oz-lime); }
-        .map-section__key-marker--current::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--oz-lime); }
-        .map-section__key-marker--complete { display: grid; place-items: center; border: 1px solid var(--oz-light-grey); }
-        .map-section__key-marker--complete svg { width: 14px; height: 14px; stroke: var(--oz-light-grey); }
+        .map-section__key-marker { position: relative; flex: 0 0 16px; width: 16px; height: 16px; border-radius: 50%; }
+        .map-section__key-marker--current { background: var(--oz-lime); }
+        .map-section__key-marker--current::after { display: none; }
+        .map-section__key-marker--complete { background: var(--oz-white); }
         .map-section__text-col { padding-left: 0; }
+        .map-section__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: var(--oz-lime); color: var(--oz-near-black); font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; transition: transform 0.2s ease; margin-top: 32px; font-family: 'Poppins', sans-serif; }
+        .map-section__cta:hover { transform: translateY(-2px); }
+        .map-section__cta .btn-arrow { width: 33px; height: 33px; background: var(--oz-near-black); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
         /* reduced motion: no map animations */
         @media (prefers-reduced-motion: reduce) {
             /* animations removed with map refactor */
         }
 
-        /* --- 10. PEOPLE & CULTURE (Stacked Scroll-X — 2 rows, opposite directions) --- */
-        .people { background: #FFFFFF; position: relative; }
-        .people__scroll-region { position: relative; width: 100vw; max-width: 100%; }
-        .people__sticky { top: 0; left: 0; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 48px 0 64px; }
-        .people__top { text-align: left; padding: 0 70px; margin-bottom: 24px; }
+        /* --- 10. PEOPLE & CULTURE (Swiper auto-scroll carousel) --- */
+        .people { background: #FFFFFF; padding: 100px 0; }
+        .people__top { margin-bottom: 40px; }
         .people__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
-        .people__title { color: #202020; font-size: 39px; font-weight: 500; margin-bottom: 16px; }
-        .people__text { color: #353535; max-width: 540px; font-size: 16px; }
-        .people__rows { display: flex; flex-direction: column; gap: 24px; overflow: hidden; }
-        .people__row { display: flex; gap: 24px; width: fit-content; will-change: transform; }
-        .people__card { flex-shrink: 0; width: 420px; border-radius: 12px; overflow: hidden; }
-        .people__card img { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 12px; }
+        .people__title { color: #202020; font-size: clamp(28px, 3.5vw, 44px); font-weight: 500; margin-bottom: 16px; }
+        .people__text { color: #353535; max-width: 540px; font-size: 16px; line-height: 1.7; }
+        .people__carousel { overflow: hidden; margin-top: 8px; position: relative; }
+        .people__carousel::before, .people__carousel::after { content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none; }
+        .people__carousel::before { left: 0; background: linear-gradient(to right, #FFFFFF, transparent); }
+        .people__carousel::after { right: 0; background: linear-gradient(to left, #FFFFFF, transparent); }
+        .people__carousel .swiper-wrapper { transition-timing-function: linear; }
+        .people__slide { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: transform 0.4s ease; }
+        .people__slide:hover { transform: scale(1.03); }
+        .people__slide img { width: 100%; height: 380px; object-fit: cover; display: block; border-radius: 12px; }
 
         @media (max-width: 1024px) {
-            .people__top { padding: 0 40px; }
-            .people__card { width: 350px; }
-            .people__card img { height: 240px; }
+            .people__slide img { height: 320px; }
         }
         @media (max-width: 768px) {
-            .people__top { padding: 0 24px; }
-            .people__rows { gap: 16px; }
-            .people__row { gap: 16px; }
-            .people__card { width: 260px; }
-            .people__card img { height: 180px; }
+            .people__slide img { height: 260px; }
         }
 
 
         /* --- 11. CERTIFICATIONS --- */
         .certs { padding: 80px 0; background: #FFFFFF; text-align: center; }
-        .certs__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
-        .certs__title { font-size: clamp(24px, 2.5vw, 32px); margin-bottom: 16px; }
-        .certs__text { color: #353535; max-width: 540px; margin: 0 auto 32px; }
-        .certs__logos { display: flex; justify-content: center; gap: 40px; align-items: center; }
-        .certs__logo { width: 80px; height: 80px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        .certs__logo img { width: 100%; height: 100%; object-fit: contain; }
+        .certs__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: rgba(204,219,42,0.08); color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1.5px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
+        .certs__title { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 16px; }
+        .certs__text { color: #353535; max-width: 540px; margin: 0 auto 40px; font-size: 16px; line-height: 1.7; }
+        .certs__cards { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+        .certs__card { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 40px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.08); background: #FFFFFF; min-width: 220px; max-width: 280px; }
+        .certs__card-logo { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .certs__card-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .certs__card-name { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; color: #202020; }
+        .certs__card-desc { font-family: 'Poppins', sans-serif; font-size: 13px; color: #353535; line-height: 1.5; opacity: 0.7; }
 
         /* --- 12. SOCIAL FEED --- */
         .social { padding: 80px 0; background: #FFFFFF; border-top: 1px solid rgba(53,53,53,0.08); }
@@ -276,27 +280,29 @@
         .social__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
         .social__title { font-size: 28px; }
 
-        /* --- 13. FOOTER (matching live site structure) --- */
-        .footer { background: transparent; border-top: 1px solid rgba(53,53,53,0.08); position: relative; overflow: hidden; }
-        .footer__shader-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-        .footer__shader-bg canvas { width: 100% !important; height: 100% !important; display: block; }
-        .footer__upper { padding: 100px 70px 100px; position: relative; z-index: 1; background: rgba(255,255,255,0.35); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+        /* --- 13. FOOTER --- */
+        .footer { background: linear-gradient(to bottom, var(--oz-charcoal) 60%, #181818 100%); position: relative; overflow: hidden; }
+        .footer__upper { padding: 80px 0; position: relative; }
         .footer__upper-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
-        .footer__col h5 { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 500; color: #202020; margin-bottom: 12px; }        .footer__col p, .footer__col li { font-size: 15px; color: #353535; line-height: 1.8; }
+        .footer__col h5 { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 500; color: var(--oz-white); margin-bottom: 12px; }
+        .footer__col p, .footer__col li { font-size: 15px; color: var(--oz-light-grey); line-height: 1.8; }
         .footer__col ul { list-style: none; }
-        .footer__col a { color: #353535; transition: color 0.2s ease; }
-        .footer__col a:hover { color: #0B0B0B; }
-        .footer__cta { display: inline-flex; align-items: center; gap: 4px; font-size: 16px; font-weight: 600; color: #0B0B0B; margin-top: 12px; }
+        .footer__col a { color: var(--oz-light-grey); transition: color 0.2s ease; }
+        .footer__col a:hover { color: var(--oz-white); }
+        .footer__col--right { margin-left: auto; }
+        .footer__cta { display: inline-flex; align-items: center; gap: 4px; font-size: 16px; font-weight: 600; color: var(--oz-white); margin-top: 12px; }
         .footer__cta svg { width: 20px; height: 20px; }
+        .footer__cta svg path { fill: var(--oz-light-grey); }
         .footer__social { display: flex; gap: 16px; margin-top: 12px; }
-        .footer__social a { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #CCDB2A; background: #FFFFFF; border: 1.5px solid #CCDB2A; border-radius: 50%; transition: background 0.2s ease; }
-        .footer__social a:hover { background: rgba(204,219,42,0.1); }
+        .footer__social a { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--oz-lime); background: transparent; border: 1.5px solid var(--oz-lime); border-radius: 50%; transition: opacity 0.2s ease; }
+        .footer__social a:hover { opacity: 0.7; }
         .footer__social svg { width: 22px; height: 22px; }
-        .footer__lower { padding: 30px 70px; border-top: 1px solid rgba(53,53,53,0.08); display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.75); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); position: relative; z-index: 1; }
-        .footer__lower-logo img { height: 32px; width: auto; }
+        .footer__lower { padding: 30px 0; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .footer__lower-logo img { height: 32px; width: auto; filter: brightness(0) invert(1); }
         .footer__lower-links { display: flex; gap: 24px; }
-        .footer__lower-links a { font-size: 12px; color: #000; }
-        .footer__copyright { font-size: 12px; color: #000; }
+        .footer__lower-links a { font-size: 12px; color: var(--oz-light-grey); }
+        .footer__lower-links a:hover { color: var(--oz-white); }
+        .footer__copyright { font-size: 12px; color: var(--oz-light-grey); }
 
 
         /* --- RESPONSIVE --- */
@@ -312,8 +318,8 @@
             .people-swiper .swiper-slide { width: 500px; }
             .people-swiper .swiper-slide img { height: 360px; }
             .footer__upper-row { grid-template-columns: repeat(2, 1fr); }
-            .footer__upper { padding: 50px 40px 30px; }
-            .footer__lower { padding: 30px 40px; }
+            .footer__upper { padding: 50px 0; }
+            .footer__lower { padding: 30px 0; }
         }
 
         @media (max-width: 768px) {
@@ -326,20 +332,30 @@
             .hero__title .word { animation: none !important; opacity: 1; filter: none; transform: none; }
             .projects__grid { grid-template-columns: 1fr; }
             .project-card--featured .project-card__image { aspect-ratio: 16 / 7; }
-            .project-card--featured .project-card__name { font-size: clamp(18px, 1.6vw, 22px); max-width: 100%; }
+            .project-card--featured .project-card__name { font-size: clamp(20px, 1.8vw, 24px); max-width: 100%; }
+            .project-card__name { font-size: 20px; }
             .projects-intro__inner { flex-direction: column; align-items: flex-start; gap: 24px; }
             .projects-intro__title { max-width: 100%; }
             .projects-intro__cta .btn-arrow { display: inline-flex; }
             .cta-banner { padding: 100px 0; }
-            .map-section { padding: 40px 0; }
+            .map-section { padding: 40px 0; max-height: none; }
             .map-section__inner { grid-template-columns: 1fr; gap: 32px; }
             .map-section__text-col { order: 1; }
-            .map-section__visual { order: 2; min-height: 0; aspect-ratio: 4 / 3; }
+            .map-section__visual { order: 2; height: 420px; min-height: 0; aspect-ratio: auto; margin: -20px 0; }
+            .map-section__vignette { background: linear-gradient(to bottom, var(--oz-charcoal) 0%, transparent 12%, transparent 88%, var(--oz-charcoal) 100%); }
             .map-section__keys { gap: 16px; }
-            .footer__upper { padding: 40px 24px 20px; }
+            .footer__upper { padding: 40px 0; }
             .footer__upper-row { grid-template-columns: 1fr; gap: 32px; }
-            .footer__lower { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+            .footer__col--right { margin-left: 0; text-align: left; }
+            .footer__col--right .footer__social { justify-content: flex-start; }
+            .footer__lower { padding: 20px 0; flex-direction: column; gap: 12px; text-align: center; }
             .people__top { padding: 0 24px; }
+            .people { padding: 60px 0; }
+            .certs { padding: 48px 0; }
+            .social { padding: 48px 0; }
+            .logos { padding: 20px 0 30px; }
+            .logos__heading { margin-bottom: 20px; }
+            .mission { padding: 60px 0; }
         }
 
         @media (max-width: 480px) {
@@ -546,10 +562,11 @@
                 <!-- Card 1: M12 Crossing (Parapets, Panels, Rail) -->
                 <a href="https://www.ozcast.com.au/projects_cpt/m12-crossing-for-sydney-metro-line-to-western-sydney-international-airport/" class="project-card project-card--featured">
                     <div class="project-card__image">
-                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/10/p2250512-1440x649-1.jpg" alt="M12 Crossing">
+                        <img src="p2250532-v2-retouched.png" alt="M12 Crossing">
                         <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
                     </div>
                     <div class="project-card__info">
+                        <span class="project-card__client">CPB Contractors / UGL</span>
                         <h3 class="project-card__name">M12 Crossing for Sydney Metro Line to Western Sydney International Airport</h3>
                         <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Structural</span></div>
                     </div>
@@ -648,7 +665,9 @@
         <div class="container">
             <div class="map-section__inner">
                 <div class="map-section__visual" data-reveal>
+                    <div class="map-section__glow"></div>
                     <canvas class="map-section__canvas" id="ausDotGrid" aria-label="Dot-grid map of Australia showing current project locations highlighted in lime green"></canvas>
+                    <div class="map-section__vignette"></div>
                 </div>
                 <div class="map-section__text-col" data-reveal data-delay="1">
                     <span class="map-section__pill">Project map</span>
@@ -660,45 +679,34 @@
                             <span>Current work</span>
                         </div>
                         <div class="map-section__key" role="listitem">
-                            <span class="map-section__key-marker map-section__key-marker--complete" aria-hidden="true">
-                                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                            </span>
+                            <span class="map-section__key-marker map-section__key-marker--complete" aria-hidden="true"></span>
                             <span>Completed projects</span>
                         </div>
                     </div>
+                    <a href="/projects/" class="map-section__cta">View all projects <span class="btn-arrow"><svg viewBox="0 0 25 24" fill="none"><path d="M15.931 13.325H4.053V10.675H15.931L10.642 5.386L12.533 3.52L21.014 12L12.533 20.48L10.642 18.614L15.931 13.325Z" fill="#CBDB2A"/></svg></span></a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- === 10. PEOPLE & CULTURE ===
-         Stacked Scroll-X: 2 rows moving in opposite directions on scroll.
-         Top row scrolls left, bottom row scrolls right. Powered by motion.dev. -->
+         Clean auto-scrolling Swiper carousel. Single row, continuous loop. -->
     <section class="people" id="peopleSection">
-        <div class="people__scroll-region">
-            <div class="people__sticky">
-                <div class="people__top">
-                    <span class="people__pill" data-reveal>About us</span>
-                    <h2 class="people__title" data-reveal data-delay="1">Our People and Culture</h2>
-                    <p class="people__text" data-reveal data-delay="2">Behind the scenes, our vibrant team at Ozcast are there to ensure we deliver the best experience for our customers.</p>
-                </div>
-                <div class="people__rows">
-                    <!-- Row 1: scrolls LEFT on scroll down -->
-                    <div class="people__row" id="peopleRow1">
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
-                    </div>
-                    <!-- Row 2: scrolls RIGHT on scroll down (starts offset) -->
-                    <div class="people__row" id="peopleRow2" style="transform: translateX(-40%);">
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team" loading="lazy"></div>
-                        <div class="people__card"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team" loading="lazy"></div>
-                    </div>
+        <div class="container">
+            <div class="people__top" data-reveal>
+                <span class="people__pill">About us</span>
+                <h2 class="people__title">Our People and Culture</h2>
+                <p class="people__text">Behind the scenes, our vibrant team at Ozcast are there to ensure we deliver the best experience for our customers.</p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="people__carousel swiper" id="peopleSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team at work" loading="lazy"></div>
+                    <div class="swiper-slide people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team collaboration" loading="lazy"></div>
+                    <div class="swiper-slide people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast manufacturing" loading="lazy"></div>
+                    <div class="swiper-slide people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team outdoors" loading="lazy"></div>
+                    <div class="swiper-slide people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast group photo" loading="lazy"></div>
                 </div>
             </div>
         </div>
@@ -710,10 +718,18 @@
         <div class="container">
             <span class="certs__pill" data-reveal>Accreditation</span>
             <h2 class="certs__title" data-reveal data-delay="1">Excellence Cemented in Standards</h2>
-            <p class="certs__text" data-reveal data-delay="2">Ozcast maintains ISO accreditation across quality, efficiency, and safety — the standard Tier 1 contractors require from their supply chain.</p>
-            <div class="certs__logos">
-                <div class="certs__logo"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/Ozcast-certificates3.jpg" alt="IAF logo"></div>
-                <div class="certs__logo"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/Ozcast-certificates2.jpg" alt="Bcert"></div>
+            <p class="certs__text" data-reveal data-delay="2">Ozcast maintains ISO accreditation across quality, efficiency, and safety: the standard Tier 1 contractors require from their supply chain.</p>
+            <div class="certs__cards" data-reveal data-delay="3">
+                <div class="certs__card">
+                    <div class="certs__card-logo"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/Ozcast-certificates3.jpg" alt="IAF Accreditation logo"></div>
+                    <span class="certs__card-name">IAF Accredited</span>
+                    <span class="certs__card-desc">International Accreditation Forum member</span>
+                </div>
+                <div class="certs__card">
+                    <div class="certs__card-logo"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/10/Ozcast-certificates2.jpg" alt="ISO 9001 Quality Management certification"></div>
+                    <span class="certs__card-name">ISO 9001:2015</span>
+                    <span class="certs__card-desc">Quality Management Systems</span>
+                </div>
             </div>
         </div>
     </section>
@@ -734,14 +750,11 @@
         </div>
     </section>
 
-    <!-- === 13. FOOTER (matching live site structure) ===
-         Shader background (shaders.com) renders behind content via absolute-positioned canvas. -->
+    <!-- === 13. FOOTER === -->
     <footer class="footer">
-        <div class="footer__shader-bg" aria-hidden="true">
-            <canvas id="shaderCanvas"></canvas>
-        </div>
-        <div class="footer__upper">
-            <div class="footer__upper-row">
+        <div class="container">
+            <div class="footer__upper">
+                <div class="footer__upper-row">
                 <div class="footer__col">
                     <h5>General enquiries</h5>
                     <ul>
@@ -769,7 +782,7 @@
                         <svg viewBox="0 0 24 25" fill="none"><path d="M12.6 12.5l-3.9-3.9a.97.97 0 01-.28-.7c0-.28.09-.52.28-.7a.97.97 0 01.7-.28c.28 0 .52.09.7.28l4.6 4.6c.1.1.17.22.21.33.04.12.06.24.06.37s-.02.26-.06.37c-.04.12-.11.23-.21.33l-4.6 4.6a.97.97 0 01-.7.28.97.97 0 01-.7-.28.97.97 0 01-.28-.7c0-.28.09-.52.28-.7l3.9-3.9z" fill="#5A5A5A"/></svg>
                     </a>
                 </div>
-                <div class="footer__col">
+                <div class="footer__col footer__col--right">
                     <h5>Follow us</h5>
                     <div class="footer__social">
                         <a href="https://www.facebook.com/ozcastprecast" target="_blank" aria-label="Facebook">
@@ -785,15 +798,16 @@
                 </div>
             </div>
         </div>
-        <div class="footer__lower">
-            <div class="footer__lower-logo">
-                <a href="/"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/ozcast-logo-footer.svg" alt="Ozcast" width="113" height="32"></a>
+            <div class="footer__lower">
+                <div class="footer__lower-logo">
+                    <a href="/"><img src="https://www.ozcast.com.au/wp-content/uploads/2024/06/ozcast-logo-footer.svg" alt="Ozcast" width="113" height="32"></a>
+                </div>
+                <div class="footer__lower-links">
+                    <a href="/privacy-policy/">Privacy Policy</a>
+                    <a href="/privacy-policy/">Terms and Conditions</a>
+                </div>
+                <div class="footer__copyright">All rights reserved &copy; 2026 Ozcast Precast Pty Ltd</div>
             </div>
-            <div class="footer__lower-links">
-                <a href="/privacy-policy/">Privacy Policy</a>
-                <a href="/privacy-policy/">Terms and Conditions</a>
-            </div>
-            <div class="footer__copyright">All rights reserved &copy; 2026 Ozcast Precast Pty Ltd</div>
         </div>
     </footer>
 
@@ -931,36 +945,33 @@
         }
     </script>
 
-    <!-- People & Culture: Stacked Scroll-X powered by motion (motion.dev)
-         Row 1 scrolls left, Row 2 scrolls right. Starts animating as section enters viewport. -->
-    <script type="module">
-        import { scroll, animate } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
-
-        const peopleSection = document.querySelector('.people__scroll-region');
-        const row1 = document.getElementById('peopleRow1');
-        const row2 = document.getElementById('peopleRow2');
-
-        if (peopleSection && row1 && row2) {
-            // Row 1: scrolls LEFT
-            scroll(
-                animate(row1, { transform: ['translateX(0%)', 'translateX(-40%)'] }, { ease: 'linear' }),
-                { target: peopleSection, offset: ['start end', 'end start'] }
-            );
-
-            // Row 2: scrolls RIGHT (starts offset, returns toward 0)
-            scroll(
-                animate(row2, { transform: ['translateX(-40%)', 'translateX(0%)'] }, { ease: 'linear' }),
-                { target: peopleSection, offset: ['start end', 'end start'] }
-            );
-        }
+    <!-- People & Culture: Swiper auto-scroll carousel -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        new Swiper('#peopleSwiper', {
+            slidesPerView: 1.2,
+            spaceBetween: 20,
+            loop: true,
+            speed: 6000,
+            allowTouchMove: false,
+            autoplay: {
+                delay: 0,
+                disableOnInteraction: false,
+            },
+            breakpoints: {
+                640: { slidesPerView: 2.2, spaceBetween: 24 },
+                1024: { slidesPerView: 3.2, spaceBetween: 24 },
+                1400: { slidesPerView: 3.8, spaceBetween: 28 },
+            }
+        });
     </script>
 
-    <!-- Footer shader (bundled from shaders.com export via Vite) -->
-    <script type="module" src="footer-shader.js"></script>
+    <!-- Footer shader removed (dark bg replaces it) -->
 
  <!-- Australia dot-grid map (GSAP-powered interactive) -->
  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
- <script src="aus-dot-grid.js?v=2"></script>
+ <script src="aus-dot-grid.js?v=13"></script>
 
 </body>
 </html>
