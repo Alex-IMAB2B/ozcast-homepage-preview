@@ -296,6 +296,16 @@
         .map-section__visual { position: relative; height: 780px; margin: -60px 0; }
         .map-section__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
         .map-section__vignette { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(to bottom, var(--oz-charcoal) 0%, transparent 15%, transparent 85%, var(--oz-charcoal) 100%); }
+        .map-section__fade-bottom {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 88px;
+            pointer-events: none;
+            z-index: 2;
+            background: linear-gradient(to bottom, transparent 0%, var(--oz-charcoal) 100%);
+        }
         .map-section__glow { position: absolute; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 50% 60% at 65% 50%, rgba(204,219,42,0.04) 0%, transparent 70%); }
         .map-section__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: var(--oz-light-grey); font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid var(--oz-lime); font-family: 'Poppins', sans-serif; }
         .map-section__title { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 20px; color: var(--oz-white); }
@@ -442,6 +452,7 @@
                 aspect-ratio: auto;
             }
             .map-section__vignette { background: linear-gradient(to bottom, var(--oz-charcoal) 0%, transparent 8%, transparent 92%, var(--oz-charcoal) 100%); }
+            .map-section__fade-bottom { height: 72px; }
             .map-section__keys { gap: 16px; }
             .footer__upper { padding: 40px 0; }
             .footer__upper-row { grid-template-columns: 1fr; gap: 32px; }
@@ -789,6 +800,7 @@
                     <div class="map-section__glow"></div>
                     <canvas class="map-section__canvas" id="ausDotGrid" aria-label="Dot-grid map of Australia showing current project locations highlighted in lime green"></canvas>
                     <div class="map-section__vignette"></div>
+                    <div class="map-section__fade-bottom" aria-hidden="true"></div>
                 </div>
                 <div class="map-section__text-col" data-reveal data-delay="1">
                     <span class="map-section__pill">Project map</span>
