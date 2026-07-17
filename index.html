@@ -201,11 +201,11 @@
 
 
         /* --- 3. MISSION / ABOUT --- */
-        .mission { padding: 100px 0; background: #FFFFFF; }
+        .mission { padding: 100px 0; background: var(--oz-charcoal); }
         .mission__inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: center; }
-        .mission__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
-        .mission__title { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 20px; max-width: 600px; }
-        .mission__text { font-size: 16px; color: #353535; line-height: 1.7; margin-bottom: 24px; max-width: 540px; }
+        .mission__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: var(--oz-light-grey); font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid var(--oz-lime); font-family: 'Poppins', sans-serif; }
+        .mission__title { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 20px; max-width: 600px; color: var(--oz-white); }
+        .mission__text { font-size: 16px; color: var(--oz-light-grey); line-height: 1.7; margin-bottom: 24px; max-width: 540px; }
         .mission__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: #CCDB2A; color: #282829; font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; }
         .mission__cta .btn-arrow { width: 33px; height: 33px; background: #282829; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .mission__cta .btn-arrow svg { width: 16px; height: 16px; }
@@ -213,27 +213,27 @@
         .mission__image img { width: 100%; height: 100%; object-fit: cover; display: block; transform: translateY(0); transition: transform 0.1s linear; }
 
         /* --- 4. PARTNER LOGOS MARQUEE --- */
-        .logos { padding: 60px 0 80px; background: #FFFFFF; overflow: hidden; }
-        .logos__heading { text-align: center; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; color: #353535; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 32px; }
+        .logos { padding: 60px 0 80px; background: var(--oz-charcoal); overflow: hidden; }
+        .logos__heading { text-align: center; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; color: var(--oz-light-grey); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 32px; }
         .logos__track { display: flex; animation: marqueeScroll 35s linear infinite; width: max-content; }
         .logos__track:hover { animation-play-state: paused; }
         .logos__set { display: flex; align-items: center; gap: 60px; padding: 0 30px; }
-        .logos__item { flex-shrink: 0; width: 120px; height: 48px; display: flex; align-items: center; justify-content: center; filter: grayscale(1) opacity(0.5); transition: filter 0.3s ease; }
-        .logos__item:hover { filter: grayscale(0) opacity(1); }
+        .logos__item { flex-shrink: 0; width: 120px; height: 48px; display: flex; align-items: center; justify-content: center; filter: brightness(0) invert(1) opacity(0.45); transition: filter 0.3s ease, opacity 0.3s ease; }
+        .logos__item:hover { filter: brightness(0) invert(1) opacity(1); }
         .logos__item img { max-width: 100%; max-height: 100%; object-fit: contain; }
         @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
 
         /* --- 5. STATS / NUMBERS (NEW SECTION) --- */
-        .stats-wrapper { position: relative; }
+        .stats-wrapper { position: relative; background: var(--oz-charcoal); }
         .stats-wrapper::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 63px; z-index: 2; pointer-events: none; background: #CCDB2A; clip-path: polygon(0 60px, 100% 0, 100% 3px, 0 63px); }
-        .stats { background: #202020; padding: 120px 0 80px; position: relative; clip-path: polygon(0 60px, 100% 0, 100% 100%, 0 100%); }
+        .stats { background: #FFFFFF; padding: 120px 0 40px; position: relative; clip-path: polygon(0 60px, 100% 0, 100% 100%, 0 100%); }
         .stats__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; }
         .stats__item { padding: 20px; }
-        .stats__number { font-family: 'Inter', sans-serif; font-size: clamp(36px, 4vw, 56px); font-weight: 500; color: #FFFFFF; line-height: 1; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .stats__number .suffix { font-size: 0.6em; color: #CCDB2A; display: inline-flex; align-items: center; }
-        .stats__label { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 400; color: #CACACA; text-transform: uppercase; letter-spacing: 1.5px; }
-        .stats__tbc { display: block; font-size: 10px; color: rgba(204,219,42,0.6); margin-top: 6px; font-style: italic; letter-spacing: 0; text-transform: none; }
+        .stats__number { font-family: 'Inter', sans-serif; font-size: clamp(36px, 4vw, 56px); font-weight: 500; color: var(--oz-charcoal); line-height: 1; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .stats__number .suffix { font-size: 0.6em; color: var(--oz-lime); display: inline-flex; align-items: center; }
+        .stats__label { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 400; color: #353535; text-transform: uppercase; letter-spacing: 1.5px; }
+        .stats__tbc { display: block; font-size: 10px; color: rgba(53,53,53,0.55); margin-top: 6px; font-style: italic; letter-spacing: 0; text-transform: none; }
 
         /* --- 6. PROJECTS INTRO --- */
         .projects-intro { padding: 80px 0 40px; background: #FFFFFF; }
@@ -373,17 +373,18 @@
         .certs__card-desc { font-family: 'Poppins', sans-serif; font-size: 13px; color: #353535; line-height: 1.5; opacity: 0.7; }
 
         /* --- 12. SOCIAL FEED --- */
-        .social { padding: 80px 0; background: #FFFFFF; border-top: 1px solid rgba(53,53,53,0.08); overflow: visible; }
+        .social { padding: 80px 0; background: var(--oz-charcoal); overflow: visible; }
         .social__top { text-align: center; margin-bottom: 32px; }
-        .social__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
-        .social__title { font-size: 28px; }
+        .social__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: var(--oz-light-grey); font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid var(--oz-lime); font-family: 'Poppins', sans-serif; }
+        .social__title { font-size: 28px; color: var(--oz-white); }
+        .social__text { color: var(--oz-light-grey); margin-top: 12px; max-width: 540px; margin-left: auto; margin-right: auto; }
         .social .container,
         .social__grid-wrapper { overflow: visible; }
         /* Give Elfsight carousel arrows room — they sit slightly outside the track */
         .social__grid-wrapper { padding: 0 4px; }
 
         /* --- 13. FOOTER --- */
-        .footer { background: linear-gradient(to bottom, var(--oz-charcoal) 60%, #181818 100%); position: relative; overflow: hidden; }
+        .footer { background: linear-gradient(to bottom, var(--oz-charcoal) 60%, #181818 100%); position: relative; overflow: hidden; border-top: 1px solid var(--oz-lime); }
         .footer__upper { padding: 80px 0; position: relative; }
         .footer__upper-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
         .footer__col h5 { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 500; color: var(--oz-white); margin-bottom: 12px; }
@@ -441,12 +442,11 @@
             .cta-banner { padding: 64px 0; }
             .map-section { padding: 80px 0 40px; max-height: none; }
             .map-section__inner { grid-template-columns: 1fr; gap: 32px; }
-            .map-section__text-col { order: 1; }
+            .map-section__text-col { order: 1; position: relative; z-index: 3; }
             .map-section__visual {
                 order: 2;
                 width: 100vw;
-                margin-left: calc(50% - 50vw);
-                margin-right: calc(50% - 50vw);
+                margin: 0 calc(50% - 50vw);
                 height: min(100vw, 440px);
                 min-height: 360px;
                 aspect-ratio: auto;
@@ -691,16 +691,16 @@
         <div class="container">
             <div class="projects__grid">
 
-                <!-- Card 1: M12 Crossing (Parapets, Panels, Rail) -->
-                <a href="https://www.ozcast.com.au/projects_cpt/m12-crossing-for-sydney-metro-line-to-western-sydney-international-airport/" class="project-card project-card--featured">
+                <!-- Card 1: Sydney Gateway (featured) -->
+                <a href="https://www.ozcast.com.au/projects_cpt/sydney-gateway/" class="project-card project-card--featured">
                     <div class="project-card__image">
-                        <img src="https://clients.imab2b.com/client/ozcast/ozc0053/p2250532-v2-retouched.png" alt="M12 Crossing">
+                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/02/P1750532-1.jpg" alt="Sydney Gateway">
                         <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
                     </div>
                     <div class="project-card__info">
-                        <span class="project-card__client">CPB Contractors / UGL</span>
-                        <h3 class="project-card__name">M12 Crossing for Sydney Metro Line to Western Sydney International Airport</h3>
-                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Structural</span></div>
+                        <span class="project-card__client">John Holland Seymour Whyte JV</span>
+                        <h3 class="project-card__name">Sydney Gateway</h3>
+                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Retaining walls</span></div>
                     </div>
                 </a>
 
@@ -730,16 +730,16 @@
                     </div>
                 </a>
 
-                <!-- Card 4: Sydney Gateway (Parapets, Panels, Retaining walls) -->
-                <a href="https://www.ozcast.com.au/projects_cpt/sydney-gateway/" class="project-card">
+                <!-- Card 4: M12 Crossing -->
+                <a href="https://www.ozcast.com.au/projects_cpt/m12-crossing-for-sydney-metro-line-to-western-sydney-international-airport/" class="project-card">
                     <div class="project-card__image">
-                        <img src="https://www.ozcast.com.au/wp-content/uploads/2025/02/P1750532-1.jpg" alt="Sydney Gateway">
+                        <img src="https://clients.imab2b.com/client/ozcast/ozc0053/p2250532-v2-retouched.png" alt="M12 Crossing">
                         <div class="project-card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
                     </div>
                     <div class="project-card__info">
-                        <span class="project-card__client">John Holland Seymour Whyte JV</span>
-                        <h3 class="project-card__name">Sydney Gateway</h3>
-                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Retaining walls</span></div>
+                        <span class="project-card__client">CPB Contractors / UGL</span>
+                        <h3 class="project-card__name">M12 Crossing for Sydney Metro Line to Western Sydney International Airport</h3>
+                        <div class="project-card__tags"><span class="project-card__tag project-card__tag--highlight">Parapets</span><span class="project-card__tag">Panels</span><span class="project-card__tag">Structural</span></div>
                     </div>
                 </a>
 
@@ -880,7 +880,7 @@
             <div class="social__top">
                 <span class="social__pill">Updates</span>
                 <h2 class="social__title">Social feed</h2>
-                <p style="color: #353535; margin-top: 12px; max-width: 540px; margin-left: auto; margin-right: auto;">Dive into the latest Ozcast developments in precast concrete, where innovation meets structure.</p>
+                <p class="social__text">Dive into the latest Ozcast developments in precast concrete, where innovation meets structure.</p>
             </div>
             <div class="social__grid-wrapper">
                 <script src="https://static.elfsight.com/platform/platform.js" async></script>
