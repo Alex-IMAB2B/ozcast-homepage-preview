@@ -172,8 +172,10 @@
         tasmaniaPath = transformPath(TASMANIA_D);
 
         // Compute scale to fit the source bounding box into canvas
-        const padX = canvasW * 0.03;
-        const padY = canvasH * 0.03;
+        // Tighter padding on narrow viewports so Australia fills more of the mobile space
+        const isNarrow = canvasW < 600;
+        const padX = canvasW * (isNarrow ? 0.01 : 0.03);
+        const padY = canvasH * (isNarrow ? 0.01 : 0.03);
         const drawW = canvasW - padX * 2;
         const drawH = canvasH - padY * 2;
         const scaleX = drawW / (SRC_W * H_STRETCH);

@@ -308,7 +308,9 @@
         .map-section__key-marker--complete { background: var(--oz-white); }
         .map-section__text-col { padding-left: 0; }
         .map-section__cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9.5px 9px 9.5px 22px; background: var(--oz-lime); color: var(--oz-near-black); font-weight: 600; font-size: 16px; border-radius: 300px; height: 52px; margin-top: 32px; font-family: 'Poppins', sans-serif; }
-        .map-section__cta .btn-arrow { width: 33px; height: 33px; background: var(--oz-near-black); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .map-section__cta .btn-arrow { width: 33px; height: 33px; flex-shrink: 0; background: var(--oz-near-black); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+        .map-section__cta .btn-arrow svg { width: 16px; height: 16px; display: block; }
+        .map-section__cta .btn-arrow svg path { fill: #CCDB2A; }
 
         /* reduced motion: no map animations */
         @media (prefers-reduced-motion: reduce) {
@@ -430,8 +432,16 @@
             .map-section { padding: 80px 0 40px; max-height: none; }
             .map-section__inner { grid-template-columns: 1fr; gap: 32px; }
             .map-section__text-col { order: 1; }
-            .map-section__visual { order: 2; height: 420px; min-height: 0; aspect-ratio: auto; margin: -20px 0; }
-            .map-section__vignette { background: linear-gradient(to bottom, var(--oz-charcoal) 0%, transparent 12%, transparent 88%, var(--oz-charcoal) 100%); }
+            .map-section__visual {
+                order: 2;
+                width: 100vw;
+                margin-left: calc(50% - 50vw);
+                margin-right: calc(50% - 50vw);
+                height: min(100vw, 440px);
+                min-height: 360px;
+                aspect-ratio: auto;
+            }
+            .map-section__vignette { background: linear-gradient(to bottom, var(--oz-charcoal) 0%, transparent 8%, transparent 92%, var(--oz-charcoal) 100%); }
             .map-section__keys { gap: 16px; }
             .footer__upper { padding: 40px 0; }
             .footer__upper-row { grid-template-columns: 1fr; gap: 32px; }
@@ -1107,7 +1117,7 @@
 
  <!-- Australia dot-grid map (GSAP-powered interactive) -->
  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
- <script src="aus-dot-grid.js?v=13"></script>
+ <script src="aus-dot-grid.js?v=14"></script>
 
 </body>
 </html>
