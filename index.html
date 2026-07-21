@@ -333,15 +333,59 @@
         .people__pill { display: inline-block; padding: 6px 9px; border-radius: 60px; background: transparent; color: #353535; font-size: 12px; font-weight: 400; margin-bottom: 16px; border: 1px solid #CCDB2A; font-family: 'Poppins', sans-serif; }
         .people__title { color: #202020; font-size: clamp(28px, 3.5vw, 44px); font-weight: 500; margin-bottom: 16px; }
         .people__text { color: #353535; max-width: 540px; font-size: 16px; line-height: 1.7; }
-        .people__carousel { overflow: hidden; margin-top: 8px; position: relative; }
+        .people__carousel-wrap { position: relative; margin-top: 8px; }
+        .people__carousel { overflow: hidden; position: relative; }
         .people__carousel::before, .people__carousel::after { content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none; }
         .people__carousel::before { left: 0; background: linear-gradient(to right, #FFFFFF, transparent); }
         .people__carousel::after { right: 0; background: linear-gradient(to left, #FFFFFF, transparent); }
+        .people__zoom {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 4;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: var(--oz-charcoal);
+            color: #FFFFFF;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .people__zoom:hover {
+            background: var(--oz-lime);
+            color: var(--oz-near-black);
+            transform: scale(1.05);
+        }
+        .people__zoom:focus-visible { outline: 3px solid var(--oz-lime); outline-offset: 3px; }
+        .people__zoom svg { width: 20px; height: 20px; display: block; }
         .people__track { display: flex; gap: 24px; width: max-content; animation: peopleMarquee 45s linear infinite; }
-        .people__carousel:hover .people__track { animation-play-state: paused; }
-        .people__slide { flex-shrink: 0; width: min(420px, 78vw); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: transform 0.4s ease; }
+        .people__carousel:hover .people__track,
+        .people__carousel.is-paused .people__track { animation-play-state: paused; }
+        .people__slide {
+            flex-shrink: 0;
+            width: min(420px, 78vw);
+            padding: 0;
+            border: none;
+            background: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: transform 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            display: block;
+            text-align: left;
+            -webkit-tap-highlight-color: transparent;
+        }
         .people__slide:hover { transform: scale(1.03); }
-        .people__slide img { width: 100%; height: 380px; object-fit: cover; display: block; border-radius: 12px; }
+        .people__slide:focus-visible { outline: 3px solid var(--oz-lime); outline-offset: 4px; }
+        .people__slide img { width: 100%; height: 380px; object-fit: cover; display: block; border-radius: 12px; pointer-events: none; }
         @keyframes peopleMarquee {
             from { transform: translateX(0); }
             to { transform: translateX(-50%); }
@@ -354,9 +398,160 @@
             .people__slide img { height: 320px; }
         }
         @media (max-width: 768px) {
-            .people__slide { width: min(300px, 78vw); }
+            .people__zoom {
+                top: 8px;
+                right: max(8px, env(safe-area-inset-right));
+                width: 40px;
+                height: 40px;
+            }
+            .people__zoom svg { width: 18px; height: 18px; }
+            .people__carousel {
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                overscroll-behavior-x: contain;
+                touch-action: pan-x;
+                cursor: grab;
+                scrollbar-width: none;
+            }
+            .people__carousel::-webkit-scrollbar { display: none; }
+            .people__carousel.is-dragging { cursor: grabbing; scroll-snap-type: none; }
+            .people__carousel::before, .people__carousel::after { width: 40px; }
+            .people__track {
+                animation: none;
+                gap: 16px;
+                padding: 0 24px;
+                transform: none !important;
+            }
+            .people__slide {
+                width: min(300px, 78vw);
+                scroll-snap-align: center;
+                touch-action: pan-x;
+            }
+            .people__slide:hover { transform: none; }
             .people__slide img { height: 260px; }
-            .people__track { gap: 16px; animation-duration: 35s; }
+            .people__slide[aria-hidden="true"] { display: none; }
+        }
+
+        /* People lightbox */
+        .people-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+            background: rgba(15, 15, 15, 0.92);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .people-lightbox.is-open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .people-lightbox__dialog {
+            position: relative;
+            width: min(1100px, 100%);
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .people-lightbox__img {
+            display: block;
+            max-width: 100%;
+            max-height: calc(100vh - 96px);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            user-select: none;
+        }
+        .people-lightbox__close,
+        .people-lightbox__nav {
+            position: absolute;
+            border: none;
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .people-lightbox__close:hover,
+        .people-lightbox__nav:hover { background: rgba(255,255,255,0.22); }
+        .people-lightbox__close:focus-visible,
+        .people-lightbox__nav:focus-visible { outline: 2px solid var(--oz-lime); outline-offset: 2px; }
+        .people-lightbox__close {
+            top: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .people-lightbox__close svg { width: 20px; height: 20px; }
+        .people-lightbox__nav {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .people-lightbox__nav--prev { left: 16px; }
+        .people-lightbox__nav--next { right: 16px; }
+        .people-lightbox__nav svg { width: 22px; height: 22px; }
+        .people-lightbox__counter {
+            position: absolute;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.75);
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            letter-spacing: 0.04em;
+            z-index: 2;
+        }
+        body.people-lightbox-open { overflow: hidden; }
+        @media (max-width: 768px) {
+            .people-lightbox { padding: 0; background: #0b0b0b; }
+            .people-lightbox__dialog {
+                width: 100%;
+                height: 100%;
+                max-height: none;
+            }
+            .people-lightbox__img {
+                max-width: 100vw;
+                max-height: 100vh;
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .people-lightbox__close {
+                top: max(12px, env(safe-area-inset-top));
+                right: max(12px, env(safe-area-inset-right));
+                background: rgba(0,0,0,0.45);
+            }
+            .people-lightbox__nav {
+                width: 44px;
+                height: 44px;
+                background: rgba(0,0,0,0.35);
+            }
+            .people-lightbox__nav--prev { left: max(8px, env(safe-area-inset-left)); }
+            .people-lightbox__nav--next { right: max(8px, env(safe-area-inset-right)); }
+            .people-lightbox__counter {
+                bottom: max(16px, env(safe-area-inset-bottom));
+            }
         }
 
 
@@ -823,7 +1018,7 @@
     </section>
 
     <!-- === 10. PEOPLE & CULTURE ===
-         CSS marquee carousel (no Swiper — global Swiper broke the Elfsight social feed). -->
+         CSS marquee on desktop; native drag-scroll on mobile. Click/tap opens lightbox. -->
     <section class="people" id="peopleSection">
         <div class="container">
             <div class="people__top" data-reveal>
@@ -833,23 +1028,60 @@
             </div>
         </div>
         <div class="container">
-            <div class="people__carousel" id="peopleSwiper" aria-label="Team photos">
-                <div class="people__track">
-                    <div class="people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team at work" loading="lazy"></div>
-                    <div class="people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team collaboration" loading="lazy"></div>
-                    <div class="people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast manufacturing" loading="lazy"></div>
-                    <div class="people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team outdoors" loading="lazy"></div>
-                    <div class="people__slide"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast group photo" loading="lazy"></div>
-                    <!-- Duplicate set for seamless loop -->
-                    <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="" loading="lazy"></div>
-                    <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="" loading="lazy"></div>
-                    <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="" loading="lazy"></div>
-                    <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="" loading="lazy"></div>
-                    <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="" loading="lazy"></div>
+            <div class="people__carousel-wrap">
+                <button type="button" class="people__zoom" id="peopleZoomBtn" aria-label="Zoom in to view team photos">
+                    <!-- Lucide: zoom-in -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                        <path d="M11 8v6"></path>
+                        <path d="M8 11h6"></path>
+                    </svg>
+                </button>
+                <div class="people__carousel" id="peopleCarousel" aria-label="Team photos">
+                    <div class="people__track">
+                        <button type="button" class="people__slide" data-people-index="0" aria-label="View larger: Ozcast team at work">
+                            <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="Ozcast team at work" loading="lazy">
+                        </button>
+                        <button type="button" class="people__slide" data-people-index="1" aria-label="View larger: Ozcast team collaboration">
+                            <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="Ozcast team collaboration" loading="lazy">
+                        </button>
+                        <button type="button" class="people__slide" data-people-index="2" aria-label="View larger: Ozcast manufacturing">
+                            <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="Ozcast manufacturing" loading="lazy">
+                        </button>
+                        <button type="button" class="people__slide" data-people-index="3" aria-label="View larger: Ozcast team outdoors">
+                            <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="Ozcast team outdoors" loading="lazy">
+                        </button>
+                        <button type="button" class="people__slide" data-people-index="4" aria-label="View larger: Ozcast group photo">
+                            <img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="Ozcast group photo" loading="lazy">
+                        </button>
+                        <!-- Duplicate set for seamless desktop marquee loop -->
+                        <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180223.jpg" alt="" loading="lazy"></div>
+                        <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180265-scaled.jpg" alt="" loading="lazy"></div>
+                        <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180423.jpg" alt="" loading="lazy"></div>
+                        <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180460-scaled.jpg" alt="" loading="lazy"></div>
+                        <div class="people__slide" aria-hidden="true"><img src="https://www.imab2b.com/wp-content/uploads/2026/06/1180500-scaled.jpg" alt="" loading="lazy"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <div class="people-lightbox" id="peopleLightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Team photo viewer">
+        <button type="button" class="people-lightbox__close" aria-label="Close photo viewer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <button type="button" class="people-lightbox__nav people-lightbox__nav--prev" aria-label="Previous photo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <div class="people-lightbox__dialog">
+            <img class="people-lightbox__img" id="peopleLightboxImg" src="" alt="">
+        </div>
+        <button type="button" class="people-lightbox__nav people-lightbox__nav--next" aria-label="Next photo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <div class="people-lightbox__counter" id="peopleLightboxCounter" aria-live="polite"></div>
+    </div>
 
     <!-- === 11. CERTIFICATIONS ===
          Using real ISO logos from the live site. -->
@@ -1121,9 +1353,132 @@
                 setTimeout(() => { heroVideo.classList.add('loaded'); }, 3000);
             }
         }
+
+        // People carousel: mobile drag-scroll + lightbox expand
+        (function initPeopleGallery() {
+            const carousel = document.getElementById('peopleCarousel');
+            const lightbox = document.getElementById('peopleLightbox');
+            const lightboxImg = document.getElementById('peopleLightboxImg');
+            const lightboxCounter = document.getElementById('peopleLightboxCounter');
+            if (!carousel || !lightbox || !lightboxImg) return;
+
+            const slides = Array.from(carousel.querySelectorAll('.people__slide[data-people-index]'));
+            const images = slides.map((slide) => {
+                const img = slide.querySelector('img');
+                return { src: img.src, alt: img.alt || 'Team photo' };
+            });
+            if (!images.length) return;
+
+            let activeIndex = 0;
+            let lastFocused = null;
+            let suppressClick = false;
+            let pointerStartX = 0;
+            let pointerStartY = 0;
+            let isPointerDragging = false;
+            let dragScrollStart = 0;
+
+            const isMobileScroll = () => window.matchMedia('(max-width: 768px)').matches;
+
+            // Pause marquee while interacting (desktop)
+            carousel.addEventListener('pointerdown', () => carousel.classList.add('is-paused'));
+            carousel.addEventListener('pointerup', () => carousel.classList.remove('is-paused'));
+            carousel.addEventListener('pointerleave', () => carousel.classList.remove('is-paused'));
+
+            // Track movement so a swipe doesn't accidentally open the lightbox
+            carousel.addEventListener('pointerdown', (e) => {
+                suppressClick = false;
+                pointerStartX = e.clientX;
+                pointerStartY = e.clientY;
+
+                // Mouse drag-to-scroll on mobile widths (touch uses native overflow scroll)
+                if (isMobileScroll() && e.pointerType === 'mouse' && e.button === 0) {
+                    isPointerDragging = true;
+                    dragScrollStart = carousel.scrollLeft;
+                    carousel.classList.add('is-dragging');
+                    carousel.setPointerCapture?.(e.pointerId);
+                    e.preventDefault();
+                }
+            });
+
+            carousel.addEventListener('pointermove', (e) => {
+                const dx = e.clientX - pointerStartX;
+                const dy = e.clientY - pointerStartY;
+                if (Math.abs(dx) > 8 || Math.abs(dy) > 8) suppressClick = true;
+
+                if (!isPointerDragging) return;
+                carousel.scrollLeft = dragScrollStart - dx;
+            });
+
+            const endPointerDrag = () => {
+                if (!isPointerDragging) return;
+                isPointerDragging = false;
+                carousel.classList.remove('is-dragging');
+            };
+            carousel.addEventListener('pointerup', endPointerDrag);
+            carousel.addEventListener('pointercancel', endPointerDrag);
+
+            // Native touch scroll also counts as a drag
+            carousel.addEventListener('scroll', () => { suppressClick = true; }, { passive: true });
+
+            function openLightbox(index) {
+                activeIndex = ((index % images.length) + images.length) % images.length;
+                const item = images[activeIndex];
+                lightboxImg.src = item.src;
+                lightboxImg.alt = item.alt;
+                lightboxCounter.textContent = `${activeIndex + 1} / ${images.length}`;
+                lastFocused = document.activeElement;
+                lightbox.classList.add('is-open');
+                lightbox.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('people-lightbox-open');
+                lightbox.querySelector('.people-lightbox__close')?.focus();
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('is-open');
+                lightbox.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('people-lightbox-open');
+                lightboxImg.removeAttribute('src');
+                if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+            }
+
+            function showNext(delta) {
+                openLightbox(activeIndex + delta);
+            }
+
+            slides.forEach((slide) => {
+                slide.addEventListener('click', (e) => {
+                    if (suppressClick) {
+                        e.preventDefault();
+                        suppressClick = false;
+                        return;
+                    }
+                    const index = Number(slide.dataset.peopleIndex);
+                    if (Number.isFinite(index)) openLightbox(index);
+                });
+            });
+
+            document.getElementById('peopleZoomBtn')?.addEventListener('click', () => {
+                openLightbox(0);
+            });
+
+            lightbox.querySelector('.people-lightbox__close')?.addEventListener('click', closeLightbox);
+            lightbox.querySelector('.people-lightbox__nav--prev')?.addEventListener('click', () => showNext(-1));
+            lightbox.querySelector('.people-lightbox__nav--next')?.addEventListener('click', () => showNext(1));
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('is-open')) return;
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') showNext(-1);
+                if (e.key === 'ArrowRight') showNext(1);
+            });
+        })();
     </script>
 
-    <!-- People & Culture uses CSS marquee (Swiper removed — it conflicted with Elfsight) -->
+    <!-- People & Culture: native mobile drag-scroll + lightbox (no Swiper) -->
 
     <!-- Footer shader removed (dark bg replaces it) -->
 
