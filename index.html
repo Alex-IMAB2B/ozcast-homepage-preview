@@ -334,10 +334,19 @@
         .people__title { color: #202020; font-size: clamp(28px, 3.5vw, 44px); font-weight: 500; margin-bottom: 16px; }
         .people__text { color: #353535; max-width: 540px; font-size: 16px; line-height: 1.7; }
         .people__carousel-wrap { position: relative; margin-top: 8px; }
+        .people__carousel-wrap::before,
+        .people__carousel-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .people__carousel-wrap::before { left: 0; background: linear-gradient(to right, #FFFFFF, transparent); }
+        .people__carousel-wrap::after { right: 0; background: linear-gradient(to left, #FFFFFF, transparent); }
         .people__carousel { overflow: hidden; position: relative; }
-        .people__carousel::before, .people__carousel::after { content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none; }
-        .people__carousel::before { left: 0; background: linear-gradient(to right, #FFFFFF, transparent); }
-        .people__carousel::after { right: 0; background: linear-gradient(to left, #FFFFFF, transparent); }
         .people__zoom {
             position: absolute;
             top: 12px;
@@ -409,29 +418,30 @@
                 overflow-x: auto;
                 overflow-y: hidden;
                 -webkit-overflow-scrolling: touch;
-                scroll-snap-type: x mandatory;
                 overscroll-behavior-x: contain;
                 touch-action: pan-x;
                 cursor: grab;
                 scrollbar-width: none;
             }
             .people__carousel::-webkit-scrollbar { display: none; }
-            .people__carousel.is-dragging { cursor: grabbing; scroll-snap-type: none; }
-            .people__carousel::before, .people__carousel::after { width: 40px; }
+            .people__carousel.is-dragging { cursor: grabbing; }
+            .people__carousel-wrap::before,
+            .people__carousel-wrap::after { width: 48px; }
             .people__track {
                 animation: none;
                 gap: 16px;
                 padding: 0 24px;
                 transform: none !important;
+                width: max-content;
             }
             .people__slide {
                 width: min(300px, 78vw);
-                scroll-snap-align: center;
                 touch-action: pan-x;
             }
             .people__slide:hover { transform: none; }
             .people__slide img { height: 260px; }
-            .people__slide[aria-hidden="true"] { display: none; }
+            /* Keep duplicate set visible for seamless JS auto-scroll loop */
+            .people__slide[aria-hidden="true"] { display: block; pointer-events: none; }
         }
 
         /* People lightbox */
@@ -1354,7 +1364,7 @@
             }
         }
 
-        // People carousel: mobile drag-scroll + lightbox expand
+        // People carousel: mobile auto-scroll + drag + lightbox expand
         (function initPeopleGallery() {
             const carousel = document.getElementById('peopleCarousel');
             const lightbox = document.getElementById('peopleLightbox');
@@ -1377,9 +1387,82 @@
             let isPointerDragging = false;
             let dragScrollStart = 0;
 
-            const isMobileScroll = () => window.matchMedia('(max-width: 768px)').matches;
+            const mobileMq = window.matchMedia('(max-width: 768px)');
+            const reduceMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const isMobileScroll = () => mobileMq.matches;
 
-            // Pause marquee while interacting (desktop)
+            // --- Mobile JS auto-scroll (works with native drag / overflow scroll) ---
+            let autoScrollRaf = null;
+            let autoScrollPaused = false;
+            let resumeTimer = null;
+            const AUTO_SCROLL_SPEED = 0.45; // px per frame @ ~60fps ≈ slow marquee
+            const RESUME_DELAY_MS = 1600;
+
+            function loopHalf() {
+                const half = carousel.scrollWidth / 2;
+                if (half > 0 && carousel.scrollLeft >= half) {
+                    carousel.scrollLeft -= half;
+                }
+            }
+
+            function tickAutoScroll() {
+                autoScrollRaf = null;
+                if (!isMobileScroll() || reduceMotionMq.matches || autoScrollPaused) return;
+                if (document.body.classList.contains('people-lightbox-open')) {
+                    startAutoScroll();
+                    return;
+                }
+                carousel.scrollLeft += AUTO_SCROLL_SPEED;
+                loopHalf();
+                startAutoScroll();
+            }
+
+            function startAutoScroll() {
+                if (autoScrollRaf != null) return;
+                if (!isMobileScroll() || reduceMotionMq.matches || autoScrollPaused) return;
+                autoScrollRaf = requestAnimationFrame(tickAutoScroll);
+            }
+
+            function stopAutoScroll() {
+                if (autoScrollRaf != null) {
+                    cancelAnimationFrame(autoScrollRaf);
+                    autoScrollRaf = null;
+                }
+            }
+
+            function pauseAutoScroll() {
+                autoScrollPaused = true;
+                stopAutoScroll();
+                if (resumeTimer) {
+                    clearTimeout(resumeTimer);
+                    resumeTimer = null;
+                }
+            }
+
+            function scheduleResumeAutoScroll() {
+                if (resumeTimer) clearTimeout(resumeTimer);
+                resumeTimer = setTimeout(() => {
+                    resumeTimer = null;
+                    autoScrollPaused = false;
+                    startAutoScroll();
+                }, RESUME_DELAY_MS);
+            }
+
+            function syncAutoScrollMode() {
+                if (isMobileScroll() && !reduceMotionMq.matches) {
+                    autoScrollPaused = false;
+                    startAutoScroll();
+                } else {
+                    pauseAutoScroll();
+                    autoScrollPaused = false;
+                }
+            }
+
+            mobileMq.addEventListener('change', syncAutoScrollMode);
+            reduceMotionMq.addEventListener('change', syncAutoScrollMode);
+            syncAutoScrollMode();
+
+            // Pause marquee while interacting (desktop CSS animation)
             carousel.addEventListener('pointerdown', () => carousel.classList.add('is-paused'));
             carousel.addEventListener('pointerup', () => carousel.classList.remove('is-paused'));
             carousel.addEventListener('pointerleave', () => carousel.classList.remove('is-paused'));
@@ -1389,6 +1472,10 @@
                 suppressClick = false;
                 pointerStartX = e.clientX;
                 pointerStartY = e.clientY;
+
+                if (isMobileScroll()) {
+                    pauseAutoScroll();
+                }
 
                 // Mouse drag-to-scroll on mobile widths (touch uses native overflow scroll)
                 if (isMobileScroll() && e.pointerType === 'mouse' && e.button === 0) {
@@ -1407,18 +1494,31 @@
 
                 if (!isPointerDragging) return;
                 carousel.scrollLeft = dragScrollStart - dx;
+                loopHalf();
             });
 
             const endPointerDrag = () => {
-                if (!isPointerDragging) return;
-                isPointerDragging = false;
-                carousel.classList.remove('is-dragging');
+                if (isPointerDragging) {
+                    isPointerDragging = false;
+                    carousel.classList.remove('is-dragging');
+                }
+                if (isMobileScroll()) scheduleResumeAutoScroll();
             };
             carousel.addEventListener('pointerup', endPointerDrag);
             carousel.addEventListener('pointercancel', endPointerDrag);
 
-            // Native touch scroll also counts as a drag
-            carousel.addEventListener('scroll', () => { suppressClick = true; }, { passive: true });
+            // Native touch scroll also counts as a drag / pauses auto-scroll
+            carousel.addEventListener('scroll', () => {
+                suppressClick = true;
+                if (isMobileScroll()) loopHalf();
+            }, { passive: true });
+
+            carousel.addEventListener('touchstart', () => {
+                if (isMobileScroll()) pauseAutoScroll();
+            }, { passive: true });
+            carousel.addEventListener('touchend', () => {
+                if (isMobileScroll()) scheduleResumeAutoScroll();
+            }, { passive: true });
 
             function openLightbox(index) {
                 activeIndex = ((index % images.length) + images.length) % images.length;
@@ -1430,6 +1530,7 @@
                 lightbox.classList.add('is-open');
                 lightbox.setAttribute('aria-hidden', 'false');
                 document.body.classList.add('people-lightbox-open');
+                pauseAutoScroll();
                 lightbox.querySelector('.people-lightbox__close')?.focus();
             }
 
@@ -1439,6 +1540,10 @@
                 document.body.classList.remove('people-lightbox-open');
                 lightboxImg.removeAttribute('src');
                 if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+                if (isMobileScroll()) {
+                    autoScrollPaused = false;
+                    startAutoScroll();
+                }
             }
 
             function showNext(delta) {
