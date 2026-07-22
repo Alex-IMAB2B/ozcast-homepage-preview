@@ -415,32 +415,25 @@
             }
             .people__zoom svg { width: 18px; height: 18px; }
             .people__carousel {
-                overflow-x: auto;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
-                overscroll-behavior-x: contain;
-                touch-action: pan-x;
+                overflow: hidden;
+                touch-action: pan-y;
                 cursor: grab;
-                scrollbar-width: none;
             }
-            .people__carousel::-webkit-scrollbar { display: none; }
             .people__carousel.is-dragging { cursor: grabbing; }
             .people__carousel-wrap::before,
             .people__carousel-wrap::after { width: 48px; }
             .people__track {
+                /* JS drives translateX on mobile (scrollLeft is unreliable on iOS) */
                 animation: none;
                 gap: 16px;
-                padding: 0 24px;
-                transform: none !important;
-                width: max-content;
+                will-change: transform;
             }
             .people__slide {
                 width: min(300px, 78vw);
-                touch-action: pan-x;
             }
             .people__slide:hover { transform: none; }
             .people__slide img { height: 260px; }
-            /* Keep duplicate set visible for seamless JS auto-scroll loop */
+            /* Keep duplicate set visible for seamless loop */
             .people__slide[aria-hidden="true"] { display: block; pointer-events: none; }
         }
 
@@ -1367,10 +1360,11 @@
         // People carousel: mobile auto-scroll + drag + lightbox expand
         (function initPeopleGallery() {
             const carousel = document.getElementById('peopleCarousel');
+            const track = carousel?.querySelector('.people__track');
             const lightbox = document.getElementById('peopleLightbox');
             const lightboxImg = document.getElementById('peopleLightboxImg');
             const lightboxCounter = document.getElementById('peopleLightboxCounter');
-            if (!carousel || !lightbox || !lightboxImg) return;
+            if (!carousel || !track || !lightbox || !lightboxImg) return;
 
             const slides = Array.from(carousel.querySelectorAll('.people__slide[data-people-index]'));
             const images = slides.map((slide) => {
@@ -1382,143 +1376,139 @@
             let activeIndex = 0;
             let lastFocused = null;
             let suppressClick = false;
-            let pointerStartX = 0;
-            let pointerStartY = 0;
-            let isPointerDragging = false;
-            let dragScrollStart = 0;
 
             const mobileMq = window.matchMedia('(max-width: 768px)');
             const reduceMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
-            const isMobileScroll = () => mobileMq.matches;
+            const isMobile = () => mobileMq.matches;
 
-            // --- Mobile JS auto-scroll (works with native drag / overflow scroll) ---
-            let autoScrollRaf = null;
-            let autoScrollPaused = false;
+            // --- Mobile transform marquee (avoids iOS scrollLeft fractional truncation) ---
+            let offsetX = 0;
+            let rafId = null;
+            let paused = false;
             let resumeTimer = null;
-            const AUTO_SCROLL_SPEED = 0.45; // px per frame @ ~60fps ≈ slow marquee
-            const RESUME_DELAY_MS = 1600;
+            let dragging = false;
+            let dragStartX = 0;
+            let dragOrigin = 0;
+            const SPEED = 0.55; // px per frame
+            const RESUME_MS = 1400;
 
-            function loopHalf() {
-                const half = carousel.scrollWidth / 2;
-                if (half > 0 && carousel.scrollLeft >= half) {
-                    carousel.scrollLeft -= half;
+            function halfWidth() {
+                return track.scrollWidth / 2;
+            }
+
+            function applyTransform() {
+                const half = halfWidth();
+                if (half > 0) {
+                    // Keep offset in (-half, 0]
+                    while (offsetX <= -half) offsetX += half;
+                    while (offsetX > 0) offsetX -= half;
+                }
+                track.style.transform = `translate3d(${offsetX}px, 0, 0)`;
+            }
+
+            function tick() {
+                rafId = null;
+                if (!isMobile() || reduceMotionMq.matches) return;
+                if (!paused && !dragging && !document.body.classList.contains('people-lightbox-open')) {
+                    offsetX -= SPEED;
+                    applyTransform();
+                }
+                rafId = requestAnimationFrame(tick);
+            }
+
+            function startLoop() {
+                if (rafId != null) return;
+                if (!isMobile() || reduceMotionMq.matches) return;
+                rafId = requestAnimationFrame(tick);
+            }
+
+            function stopLoop() {
+                if (rafId != null) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
                 }
             }
 
-            function tickAutoScroll() {
-                autoScrollRaf = null;
-                if (!isMobileScroll() || reduceMotionMq.matches || autoScrollPaused) return;
-                if (document.body.classList.contains('people-lightbox-open')) {
-                    startAutoScroll();
-                    return;
-                }
-                carousel.scrollLeft += AUTO_SCROLL_SPEED;
-                loopHalf();
-                startAutoScroll();
-            }
-
-            function startAutoScroll() {
-                if (autoScrollRaf != null) return;
-                if (!isMobileScroll() || reduceMotionMq.matches || autoScrollPaused) return;
-                autoScrollRaf = requestAnimationFrame(tickAutoScroll);
-            }
-
-            function stopAutoScroll() {
-                if (autoScrollRaf != null) {
-                    cancelAnimationFrame(autoScrollRaf);
-                    autoScrollRaf = null;
-                }
-            }
-
-            function pauseAutoScroll() {
-                autoScrollPaused = true;
-                stopAutoScroll();
+            function pauseMarquee() {
+                paused = true;
                 if (resumeTimer) {
                     clearTimeout(resumeTimer);
                     resumeTimer = null;
                 }
             }
 
-            function scheduleResumeAutoScroll() {
+            function scheduleResume() {
                 if (resumeTimer) clearTimeout(resumeTimer);
                 resumeTimer = setTimeout(() => {
                     resumeTimer = null;
-                    autoScrollPaused = false;
-                    startAutoScroll();
-                }, RESUME_DELAY_MS);
+                    paused = false;
+                }, RESUME_MS);
             }
 
-            function syncAutoScrollMode() {
-                if (isMobileScroll() && !reduceMotionMq.matches) {
-                    autoScrollPaused = false;
-                    startAutoScroll();
+            function clearMobileTransform() {
+                track.style.transform = '';
+                offsetX = 0;
+            }
+
+            function syncMode() {
+                if (isMobile() && !reduceMotionMq.matches) {
+                    paused = false;
+                    applyTransform();
+                    startLoop();
                 } else {
-                    pauseAutoScroll();
-                    autoScrollPaused = false;
+                    stopLoop();
+                    paused = false;
+                    dragging = false;
+                    clearMobileTransform();
                 }
             }
 
-            mobileMq.addEventListener('change', syncAutoScrollMode);
-            reduceMotionMq.addEventListener('change', syncAutoScrollMode);
-            syncAutoScrollMode();
+            mobileMq.addEventListener('change', syncMode);
+            reduceMotionMq.addEventListener('change', syncMode);
+            // Wait a frame so layout/images can size the track
+            requestAnimationFrame(syncMode);
+            window.addEventListener('load', () => { if (isMobile()) applyTransform(); });
 
-            // Pause marquee while interacting (desktop CSS animation)
+            // Desktop CSS marquee pause on hover/interaction
             carousel.addEventListener('pointerdown', () => carousel.classList.add('is-paused'));
             carousel.addEventListener('pointerup', () => carousel.classList.remove('is-paused'));
-            carousel.addEventListener('pointerleave', () => carousel.classList.remove('is-paused'));
+            carousel.addEventListener('pointerleave', () => {
+                if (!dragging) carousel.classList.remove('is-paused');
+            });
 
-            // Track movement so a swipe doesn't accidentally open the lightbox
             carousel.addEventListener('pointerdown', (e) => {
+                if (e.target.closest('.people__zoom')) return;
                 suppressClick = false;
-                pointerStartX = e.clientX;
-                pointerStartY = e.clientY;
+                dragStartX = e.clientX;
 
-                if (isMobileScroll()) {
-                    pauseAutoScroll();
-                }
+                if (!isMobile()) return;
+                // Only primary button / touch / pen
+                if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-                // Mouse drag-to-scroll on mobile widths (touch uses native overflow scroll)
-                if (isMobileScroll() && e.pointerType === 'mouse' && e.button === 0) {
-                    isPointerDragging = true;
-                    dragScrollStart = carousel.scrollLeft;
-                    carousel.classList.add('is-dragging');
-                    carousel.setPointerCapture?.(e.pointerId);
-                    e.preventDefault();
-                }
+                pauseMarquee();
+                dragging = true;
+                dragOrigin = offsetX;
+                carousel.classList.add('is-dragging');
+                carousel.setPointerCapture?.(e.pointerId);
             });
 
             carousel.addEventListener('pointermove', (e) => {
-                const dx = e.clientX - pointerStartX;
-                const dy = e.clientY - pointerStartY;
-                if (Math.abs(dx) > 8 || Math.abs(dy) > 8) suppressClick = true;
-
-                if (!isPointerDragging) return;
-                carousel.scrollLeft = dragScrollStart - dx;
-                loopHalf();
+                if (!dragging) return;
+                const dx = e.clientX - dragStartX;
+                if (Math.abs(dx) > 6) suppressClick = true;
+                offsetX = dragOrigin + dx;
+                applyTransform();
             });
 
-            const endPointerDrag = () => {
-                if (isPointerDragging) {
-                    isPointerDragging = false;
-                    carousel.classList.remove('is-dragging');
-                }
-                if (isMobileScroll()) scheduleResumeAutoScroll();
+            const endDrag = (e) => {
+                if (!dragging) return;
+                dragging = false;
+                carousel.classList.remove('is-dragging');
+                try { carousel.releasePointerCapture?.(e.pointerId); } catch (_) {}
+                scheduleResume();
             };
-            carousel.addEventListener('pointerup', endPointerDrag);
-            carousel.addEventListener('pointercancel', endPointerDrag);
-
-            // Native touch scroll also counts as a drag / pauses auto-scroll
-            carousel.addEventListener('scroll', () => {
-                suppressClick = true;
-                if (isMobileScroll()) loopHalf();
-            }, { passive: true });
-
-            carousel.addEventListener('touchstart', () => {
-                if (isMobileScroll()) pauseAutoScroll();
-            }, { passive: true });
-            carousel.addEventListener('touchend', () => {
-                if (isMobileScroll()) scheduleResumeAutoScroll();
-            }, { passive: true });
+            carousel.addEventListener('pointerup', endDrag);
+            carousel.addEventListener('pointercancel', endDrag);
 
             function openLightbox(index) {
                 activeIndex = ((index % images.length) + images.length) % images.length;
@@ -1530,7 +1520,7 @@
                 lightbox.classList.add('is-open');
                 lightbox.setAttribute('aria-hidden', 'false');
                 document.body.classList.add('people-lightbox-open');
-                pauseAutoScroll();
+                pauseMarquee();
                 lightbox.querySelector('.people-lightbox__close')?.focus();
             }
 
@@ -1540,9 +1530,8 @@
                 document.body.classList.remove('people-lightbox-open');
                 lightboxImg.removeAttribute('src');
                 if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
-                if (isMobileScroll()) {
-                    autoScrollPaused = false;
-                    startAutoScroll();
+                if (isMobile()) {
+                    paused = false;
                 }
             }
 
